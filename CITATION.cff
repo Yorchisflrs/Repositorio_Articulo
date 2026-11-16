@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper below."
+title: "Code and results for: Predicting School Non-Enrollment in Peru Before and After COVID-19"
+type: software
+authors:
+  - family-names: "Cusihuaman Garate"
+    given-names: "Edgar Jeferson"
+    affiliation: "Facultad de Ingeniería Estadística e Informática, Universidad Nacional del Altiplano, Puno, Peru"
+version: "2.0.0"
+date-released: "2026-11-16"
+repository-code: "https://github.com/Yorchisflrs/Repositorio_Articulo"
+preferred-citation:
+  type: unpublished
+  title: "Predicting School Non-Enrollment in Peru Before and After COVID-19: Temporal Robustness and Subgroup Calibration of Explainable Machine Learning"
+  authors:
+    - family-names: "Cusihuaman Garate"
+      given-names: "Edgar Jeferson"
+  year: 2026
+  notes: "Manuscript prepared for an IEEE conference; not yet published."

@@ -1,0 +1,55 @@
+                 rank_training  Training 2017-2019  Post-pandemic 2022-2025  rank_post
+overage                      1               1.328                    1.198          1
+age                          2               0.374                    0.367          2
+head_educ_years              3               0.182                    0.189          4
+hh_computer                  4               0.180                    0.198          3
+school_years                 5               0.171                    0.169          5
+child_of_head                6               0.163                    0.166          6
+n_kids                       7               0.113                    0.103          7
+female                       8               0.099                    0.100          8
+dom_6                        9               0.098                    0.092          9
+dom_5                       10               0.096                    0.092         10
+                              Training 2017-2019  Post-pandemic 2022-2025
+Age and schooling trajectory               1.616                    1.474
+Other individual                           0.161                    0.155
+Household socioeconomic                    0.358                    0.361
+Digital access                             0.181                    0.197
+Area                                       0.209                    0.201
+{
+ "n_refits": 30,
+ "spearman_rank_corr_min": 0.8721367521367521,
+ "spearman_rank_corr_mean": 0.9295270655270653,
+ "share_refits_same_top5_set": 0.13333333333333333,
+ "share_refits_same_top1": 1.0,
+ "spearman_training_vs_post": 0.9924786324786324,
+ "spearman_shap_vs_permutation": 0.7005128205128205,
+ "overage_identity_share": 1.0
+}
+                     feature  auc_drop  auc_drop_sd  prauc_drop  prauc_drop_sd
+Age and schooling trajectory    0.2391       0.0086      0.4987         0.0019
+     Household socioeconomic    0.0200       0.0031      0.0347         0.0026
+                        Area    0.0062       0.0011      0.0189         0.0036
+            Other individual    0.0056       0.0012      0.0262         0.0040
+              Digital access    0.0048       0.0012      0.0105         0.0026
+        feature  auc_drop  auc_drop_sd  prauc_drop  prauc_drop_sd
+        overage    0.1380       0.0067      0.4546         0.0051
+            age    0.0120       0.0014      0.0671         0.0072
+head_educ_years    0.0072       0.0014      0.0092         0.0020
+  child_of_head    0.0061       0.0009      0.0266         0.0031
+   school_years    0.0058       0.0009      0.0447         0.0043
+    hh_computer    0.0036       0.0011      0.0103         0.0022
+ overage       n  share  observed_rate  shap_mean  shap_p10  shap_p90
+    -2.0    40.0  0.002          0.038     -1.653    -1.833    -1.426
+    -1.0  2027.0  0.072          0.004     -1.699    -1.856    -1.523
+     0.0 14737.0  0.510          0.005     -1.695    -1.869    -1.501
+     1.0  7829.0  0.260          0.021     -0.517    -0.601    -0.419
+     2.0  2949.0  0.090          0.096      0.677     0.312     0.898
+     3.0  1272.0  0.035          0.216      1.381     1.026     1.648
+     4.0   557.0  0.015          0.362      2.010     1.653     2.312
+     5.0   310.0  0.009          0.508      2.592     2.405     2.766
+     6.0   111.0  0.003          0.636      3.147     2.909     3.355
+     7.0    66.0  0.002          0.837      3.501     3.233     3.737
+     8.0    50.0  0.001          0.920      3.617     3.318     3.873
+     9.0    30.0  0.001          0.926      3.611     3.316     3.922
+    10.0    16.0  0.000          0.539      3.642     3.344     3.883
+    11.0    15.0  0.000          0.946      3.788     3.572     4.033

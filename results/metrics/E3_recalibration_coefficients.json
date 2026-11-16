@@ -1,0 +1,17 @@
+{
+ "LR": {
+  "intercept": -0.06742257804161515,
+  "logistic_intercept": 0.49047393476616324,
+  "logistic_slope": 1.2205181421768638
+ },
+ "RF": {
+  "intercept": -0.0008813776910583782,
+  "logistic_intercept": 0.45463231773291884,
+  "logistic_slope": 1.206878412753306
+ },
+ "XGB": {
+  "intercept": -0.002913420803139401,
+  "logistic_intercept": 0.2507342912543766,
+  "logistic_slope": 1.1101519063024003
+ }
+}

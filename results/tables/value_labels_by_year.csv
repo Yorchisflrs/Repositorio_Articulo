@@ -1,0 +1,181 @@
+year,module,variable,present,label,value_labels
+2017,300,p300a,True,¿cuál es el idioma o lengua materna que aprendió en su niñez?,"1=quechua; 2=aymará; 3=otra lengua nativa; 4=castellano; 6=portugués; 7=otra lengua extranjera; 8=es sordomudo/a, mudo/a"
+2017,300,p301a,True,¿cuál es el último año o grado de estudios y nivel que aprobó? - nivel,1=sin nivel; 2=educación inicial; 3=primaria incompleta; 4=primaria completa; 5=secundaria incompleta; 6=secundaria completa; 7=superior no universitaria incompleta; 8=superior no universitaria completa; 9=superior universitaria incompleta; 10=superior universitaria completa; 11=postgrado universitario; 12=básica especial
+2017,300,p306,True,"este año, ¿está matriculado en algún centro o programa de educación básica o sup",1=si; 2=no
+2017,300,p303,True,"el año pasado (...), ¿estuvo matriculado en algún centro o programa de educación",1=si; 2=no
+2017,300,p305,True,el resultado que obtuvo el año pasado (...) fue :,"1=aprobado; 2=desaprobado; 3=retirado; 4=otro; 5=no aprueba, ni desaprueba (inicial)"
+2017,300,p313,True,¿cuál es la principal razón por la que no está matriculado o no asiste a algún c,1=problemas económicos; 2=estoy trabajando; 3=terminó sus estudios: secundarios/ superiores /asiste a academia preuniversitaria; 4=no tiene la edad suficiente (para el grupo 3-5 años); 5=problemas familiares; 6=de vacaciones; 7=no existe centro de educación básica o superior en el centro poblado; 8=asiste a un centro de educación técnico productiva; 9=no me interesa/no me gusta el estudio; 10=se dedica a los quehaceres del hogar; 11=otra razón
+2017,200,p203,True,¿cuál es la relación de parentesco con el jefe(a) del hogar,0=panel; 1=jefe/jefa; 2=esposo/esposa; 3=hijo/hija; 4=yerno/nuera; 5=nieto; 6=padres/suegros; 7=otros parientes; 8=trabajador hogar; 9=pensionista; 10=otros no parientes
+2017,200,p204,True,¿es miembro del hogar?,1=si; 2=no
+2017,200,p205,True,¿se encuentra ausente del hogar 30 días o más?,1=si; 2=no
+2017,200,p207,True,sexo,1=hombre; 2=mujer
+2017,100,p1142,True,su hogar tiene: celular,0=pase; 1=celular
+2017,100,p1144,True,su hogar tiene: internet,0=pase; 1=internet
+2017,100,p114b1,False,,
+2017,100,panel,True,¿el hogar fue entrevistado el año pasado?,1=si; 2=no
+2017,100,tipoentrevista,False,,
+2017,100,nbi1,True,vivienda inadecuada ( necesidad básica insatisfecha 1 ),0=vivienda adecuada; 1=vivienda inadecuada
+2017,100,result,True,resultado final de la encuesta,1=completa; 2=incompleta; 3=rechazo; 4=ausente; 5=vivienda desocupada; 6=no se inició la entrevista; 7=otro
+2017,612,p612n,True,equipamiento del hogar,7=computadora
+2017,612,p612,True,¿su hogar tiene:?,1=si; 2=no
+2017,sumaria,pobreza,True,pobreza,1=pobre extremo; 2=pobre no extremo; 3=no pobre
+2018,300,p300a,True,¿cuál es el idioma o lengua materna que aprendió en su niñez?,1=quechua; 2=aymará; 3=otra lengua nativa; 4=castellano; 6=portugués; 7=otra lengua extranjera; 8=no escucha/no habla; 9=lengua de señas peruanas
+2018,300,p301a,True,¿cuál es el último año o grado de estudios y nivel que aprobó? - nivel,1=sin nivel; 2=educación inicial; 3=primaria incompleta; 4=primaria completa; 5=secundaria incompleta; 6=secundaria completa; 7=superior no universitaria incompleta; 8=superior no universitaria completa; 9=superior universitaria incompleta; 10=superior universitaria completa; 11=maestria/doctorado; 12=básica especial
+2018,300,p306,True,"este año, ¿está matriculado en algún centro o programa de educación básica o sup",1=si; 2=no
+2018,300,p303,True,"el año pasado (...), ¿estuvo matriculado en algún centro o programa de educación",1=si; 2=no
+2018,300,p305,True,el resultado que obtuvo el año pasado (...) fue :,"1=aprobado; 2=desaprobado; 3=retirado; 4=otro; 5=no aprueba, ni desaprueba (inicial)"
+2018,300,p313,True,¿cuál es la principal razón por la que no está matriculado o no asiste a algún c,1=problemas económicos; 2=estoy trabajando; 3=terminó sus estudios: secundarios/ superiores /asiste a academia preuniversitaria; 4=no tiene la edad suficiente (para el grupo 3-5 años); 5=problemas familiares; 6=de vacaciones; 7=no existe centro de educación básica o superior en el centro poblado; 8=asiste a un centro de educación técnico productiva; 9=no me interesa/no me gusta el estudio; 10=se dedica a los quehaceres del hogar; 11=otra razón
+2018,200,p203,True,¿cuál es la relación de parentesco con el jefe(a) del hogar,0=panel; 1=jefe/jefa; 2=esposo(a)/compañero(a); 3=hijo(a)/hijastro(a); 4=yerno/nuera; 5=nieto(a); 6=padres/suegros; 7=otros parientes; 8=trabajador hogar; 9=pensionista; 10=otros no parientes; 11=hermano(a)
+2018,200,p204,True,¿es miembro del hogar?,1=si; 2=no
+2018,200,p205,True,¿se encuentra ausente del hogar 30 días o más?,1=si; 2=no
+2018,200,p207,True,sexo,1=hombre; 2=mujer
+2018,100,p1142,True,su hogar tiene: telefono celular,0=pase; 1=celular
+2018,100,p1144,True,su hogar tiene: conexion a internet,0=pase; 1=internet
+2018,100,p114b1,False,,
+2018,100,panel,True,¿el hogar fue entrevistado el año pasado?,1=si; 2=no
+2018,100,tipoentrevista,False,,
+2018,100,nbi1,True,vivienda inadecuada ( necesidad básica insatisfecha 1 ),0=vivienda adecuada; 1=vivienda inadecuada
+2018,100,result,True,resultado final de la encuesta,1=completa; 2=incompleta; 3=rechazo; 4=ausente; 5=vivienda desocupada; 6=no se inició la entrevista; 7=otro
+2018,612,p612n,True,equipamiento del hogar,7=computadora/laptop
+2018,612,p612,True,¿su hogar tiene:?,1=si; 2=no
+2018,sumaria,pobreza,True,pobreza,1=pobre extremo; 2=pobre no extremo; 3=no pobre
+2019,300,p300a,True,¿cuál es el idioma o lengua materna que aprendió en su niñez?,1=quechua; 2=aymará; 3=otra lengua nativa; 4=castellano; 6=portugués; 7=otra lengua extranjera; 8=no escucha/no habla; 9=lengua de señas peruanas
+2019,300,p301a,True,¿cuál es el último año o grado de estudios y nivel que aprobó? - nivel,1=sin nivel; 2=educación inicial; 3=primaria incompleta; 4=primaria completa; 5=secundaria incompleta; 6=secundaria completa; 7=superior no universitaria incompleta; 8=superior no universitaria completa; 9=superior universitaria incompleta; 10=superior universitaria completa; 11=maestria/doctorado; 12=básica especial
+2019,300,p306,True,"este año, ¿está matriculado en algún centro o programa de educación básica o sup",1=si; 2=no
+2019,300,p303,True,"el año pasado (...), ¿estuvo matriculado en algún centro o programa de educación",1=si; 2=no
+2019,300,p305,True,el resultado que obtuvo el año pasado (...) fue :,"1=aprobado; 2=desaprobado; 3=retirado; 4=otro; 5=no aprueba, ni desaprueba (inicial)"
+2019,300,p313,True,¿cuál es la principal razón por la que no está matriculado o no asiste a algún c,1=problemas económicos; 2=estoy trabajando; 3=terminó sus estudios: secundarios/ superiores /asiste a academia preuniversitaria; 4=no tiene la edad suficiente (para el grupo 3-5 años); 5=problemas familiares; 6=de vacaciones; 7=no existe centro de educación básica o superior en el centro poblado; 8=asiste a un centro de educación técnico productiva; 9=no me interesa/no me gusta el estudio; 10=se dedica a los quehaceres del hogar; 11=otra razón
+2019,200,p203,True,¿cuál es la relación de parentesco con el jefe(a) del hogar,0=panel; 1=jefe/jefa; 2=esposo(a)/compañero(a); 3=hijo(a)/hijastro(a); 4=yerno/nuera; 5=nieto(a); 6=padres/suegros; 7=otros parientes; 8=trabajador hogar; 9=pensionista; 10=otros no parientes; 11=hermano(a)
+2019,200,p204,True,¿es miembro del hogar?,1=si; 2=no
+2019,200,p205,True,¿se encuentra ausente del hogar 30 días o más?,1=si; 2=no
+2019,200,p207,True,sexo,1=hombre; 2=mujer
+2019,100,p1142,True,su hogar tiene: telefono celular,0=pase; 1=teléfono celular
+2019,100,p1144,True,su hogar tiene: conexion a internet,0=pase; 1=conexión a internet
+2019,100,p114b1,False,,
+2019,100,panel,True,¿el hogar fue entrevistado el año pasado?,1=si; 2=no
+2019,100,tipoentrevista,False,,
+2019,100,nbi1,True,vivienda inadecuada ( necesidad básica insatisfecha 1 ),0=vivienda adecuada; 1=vivienda inadecuada
+2019,100,result,True,resultado final de la encuesta,1=completa; 2=incompleta; 3=rechazo; 4=ausente; 5=vivienda desocupada; 6=no se inició la entrevista; 7=otro
+2019,612,p612n,True,equipamiento del hogar,7=computadora/laptop
+2019,612,p612,True,¿su hogar tiene:?,1=si; 2=no
+2019,sumaria,pobreza,True,pobreza,1=pobre extremo; 2=pobre no extremo; 3=no pobre
+2020,300,p300a,True,¿cuál es el idioma o lengua materna que aprendió en su niñez?,1=quechua; 2=aimara; 3=otra lengua nativa; 4=castellano; 6=portugués; 7=otra lengua extranjera; 8=no escucha/no habla; 9=lengua de señas peruanas; 10=ashaninka; 11=awajún/aguarun; 12=shipibo – konibo; 13=shawi/chayahuita; 14=matsigenka/machiguenga; 15=achuar
+2020,300,p301a,True,¿cuál es el último año o grado de estudios y nivel que aprobó? - nivel,1=sin nivel; 2=educación inicial; 3=primaria incompleta; 4=primaria completa; 5=secundaria incompleta; 6=secundaria completa; 7=superior no universitaria incompleta; 8=superior no universitaria completa; 9=superior universitaria incompleta; 10=superior universitaria completa; 11=maestria / doctorado; 12=básica especial
+2020,300,p306,True,"este año, ¿está matriculado en algún centro o programa de educación básica o sup",1=si; 2=no
+2020,300,p303,True,"el año pasado (...), ¿estuvo matriculado en algún centro o programa de educación",1=si; 2=no
+2020,300,p305,True,el resultado que obtuvo el año pasado (...) fue :,"1=aprobado; 2=desaprobado; 3=retirado; 4=otro; 5=no aprueba, ni desaprueba (inicial)"
+2020,300,p313,True,¿cuál es la principal razón por la que no está matriculado o no asiste a algún c,1=problemas económicos; 2=estoy trabajando; 3=terminó sus estudios: secundarios/ superiores /asiste a academia preuniversitaria; 4=no tiene la edad suficiente (para el grupo 3-5 años); 5=problemas familiares; 6=de vacaciones; 7=no existe centro de educación básica o superior en el centro poblado; 8=asiste a un centro de educación técnico productiva; 9=no me interesa/no me gusta el estudio; 10=se dedica a los quehaceres del hogar; 11=otra razón
+2020,200,p203,True,¿cuál es la relación de parentesco con el jefe(a) del hogar,0=panel; 1=jefe/jefa; 2=esposo(a)/compañero(a); 3=hijo(a)/hijastro(a); 4=yerno/nuera; 5=nieto(a); 6=padres/suegros; 7=otros parientes; 8=trabajador hogar; 9=pensionista; 10=otros no parientes; 11=hermano(a)
+2020,200,p204,True,¿es miembro del hogar?,1=si; 2=no
+2020,200,p205,True,¿se encuentra ausente del hogar 30 días o más?,1=si; 2=no
+2020,200,p207,True,sexo,1=hombre; 2=mujer
+2020,100,p1142,True,su hogar tiene: teléfono celular,0=pase; 1=teléfono celular
+2020,100,p1144,True,su hogar tiene: conexión a internet,0=pase; 1=conexión a internet
+2020,100,p114b1,False,,
+2020,100,panel,True,¿el hogar fue entrevistado el año pasado?,1=si; 2=no
+2020,100,tipoentrevista,True,tipo de entrevista,1=presencial; 2=telefónico
+2020,100,nbi1,True,vivienda inadecuada (necesidad básica insatisfecha 1 ),0=vivienda adecuada; 1=vivienda inadecuada
+2020,100,result,True,resultado final de la encuesta,1=completa; 2=incompleta; 3=rechazo; 4=ausente; 5=vivienda desocupada; 6=no se inició la entrevista; 7=otro
+2020,612,p612n,True,equipamiento del hogar,7=computadora/laptop
+2020,612,p612,True,¿su hogar tiene:?,1=si; 2=no
+2020,sumaria,pobreza,True,pobreza,1=pobre extremo; 2=pobre no extremo; 3=no pobre
+2021,300,p300a,True,¿cuál es el idioma o lengua materna que aprendió en su niñez?,1=quechua; 2=aimara; 3=otra lengua nativa; 4=castellano; 6=portugués; 7=otra lengua extranjera; 8=no escucha/no habla; 9=lengua de señas peruanas; 10=ashaninka; 11=awajún/aguaruna; 12=shipibo – konibo; 13=shawi/chayahuita; 14=matsigenka/machiguenga; 15=achuar
+2021,300,p301a,True,¿cuál es el último año o grado de estudios y nivel que aprobó? - nivel,1=sin nivel; 2=educación inicial; 3=primaria incompleta; 4=primaria completa; 5=secundaria incompleta; 6=secundaria completa; 7=superior no universitaria incompleta; 8=superior no universitaria completa; 9=superior universitaria incompleta; 10=superior universitaria completa; 11=maestria / doctorado; 12=básica especial
+2021,300,p306,True,"este año, ¿está matriculado en algún centro o programa de educación básica o sup",1=si; 2=no
+2021,300,p303,True,"el año pasado (...), ¿estuvo matriculado en algún centro o programa de educación",1=si; 2=no
+2021,300,p305,True,el resultado que obtuvo el año pasado (...) fue :,"1=aprobado; 2=desaprobado; 3=retirado; 4=otro; 5=no aprueba, ni desaprueba (inicial)"
+2021,300,p313,True,¿cuál es la principal razón por la que no está matriculado o no asiste a algún c,1=problemas económicos; 2=estoy trabajando; 3=terminó sus estudios: secundarios/ superiores /asiste a academia preuniversitaria; 4=no tiene la edad suficiente (para el grupo 3-5 años); 5=problemas familiares; 6=de vacaciones; 7=no existe centro de educación básica o superior en el centro poblado; 8=asiste a un centro de educación técnico productiva; 9=no me interesa/no me gusta el estudio; 10=se dedica a los quehaceres del hogar; 11=otra razón
+2021,200,p203,True,¿cuál es la relación de parentesco con el jefe(a) del hogar,0=panel; 1=jefe/jefa; 2=esposo(a)/compañero(a); 3=hijo(a)/hijastro(a); 4=yerno/nuera; 5=nieto(a); 6=padres/suegros; 7=otros parientes; 8=trabajador hogar; 9=pensionista; 10=otros no parientes; 11=hermano(a)
+2021,200,p204,True,¿es miembro del hogar?,1=si; 2=no
+2021,200,p205,True,¿se encuentra ausente del hogar 30 días o más?,1=si; 2=no
+2021,200,p207,True,sexo,1=hombre; 2=mujer
+2021,100,p1142,True,su hogar tiene: teléfono celular,0=pase; 1=teléfono celular
+2021,100,p1144,True,su hogar tiene: conexión a internet,0=pase; 1=conexión a internet
+2021,100,p114b1,False,,
+2021,100,panel,True,¿el hogar fue entrevistado el año pasado?,1=si; 2=no
+2021,100,tipoentrevista,False,,
+2021,100,nbi1,True,vivienda inadecuada (necesidad básica insatisfecha 1 ),0=vivienda adecuada; 1=vivienda inadecuada
+2021,100,result,True,resultado final de la encuesta,1=completa; 2=incompleta; 3=rechazo; 4=ausente; 5=vivienda desocupada; 6=no se inició la entrevista; 7=otro
+2021,612,p612n,True,equipamiento del hogar,7=computadora/laptop
+2021,612,p612,True,¿su hogar tiene:?,1=si; 2=no
+2021,sumaria,pobreza,True,pobreza,1=pobre extremo; 2=pobre no extremo; 3=no pobre
+2022,300,p300a,True,¿cual es el idioma o lengua materna que aprendio en su niñez?,1=quechua; 2=aimara; 3=otra lengua nativa; 4=castellano; 6=portugues; 7=otra lengua extranjera; 8=no escucha/no habla; 9=lengua de señas peruanas; 10=ashaninka; 11=awajun/aguarun; 12=shipibo – konibo; 13=shawi/chayahuita; 14=matsigenka/machiguenga; 15=achuar
+2022,300,p301a,True,¿cual es el ultimo año o grado de estudios y nivel que aprobo? - nivel,1=sin nivel; 2=educacion inicial; 3=primaria incompleta; 4=primaria completa; 5=secundaria incompleta; 6=secundaria completa; 7=superior no universitaria incompleta; 8=superior no universitaria completa; 9=superior universitaria incompleta; 10=superior universitaria completa; 11=maestria / doctorado; 12=basica especial
+2022,300,p306,True,"este año, ¿esta matriculado en algun centro o programa de educacion basica o sup",1=si; 2=no
+2022,300,p303,True,"el año pasado (...), ¿estuvo matriculado en algun centro o programa de educacion",1=si; 2=no
+2022,300,p305,True,el resultado que obtuvo el año pasado (...) fue :,"1=aprobado; 2=desaprobado; 3=retirado; 4=otro; 5=no aprueba, ni desaprueba (inicial)"
+2022,300,p313,True,¿cual es la principal razon por la que no esta matriculado o no asiste a algun c,1=problemas economicos; 2=estoy trabajando; 3=termino sus estudios: secundarios/ superiores /asiste a academia preuniversitaria; 4=no tiene la edad suficiente (para el grupo 3-5 años); 5=problemas familiares; 6=de vacaciones; 7=no existe centro de educacion basica o superior en el centro poblado; 8=asiste a un centro de educacion tecnico productiva; 9=no me interesa/no me gusta el estudio; 10=se dedica a los quehaceres del hogar; 11=otra razon
+2022,200,p203,True,¿cual es la relacion de parentesco con el jefe(a) del hogar,0=panel; 1=jefe/jefa; 2=esposo(a)/compañero(a); 3=hijo(a)/hijastro(a); 4=yerno/nuera; 5=nieto(a); 6=padres/suegros; 7=otros parientes; 8=trabajador hogar; 9=pensionista; 10=otros no parientes; 11=hermano(a)
+2022,200,p204,True,¿es miembro del hogar?,1=si; 2=no
+2022,200,p205,True,¿se encuentra ausente del hogar 30 dias o mas?,1=si; 2=no
+2022,200,p207,True,sexo,1=hombre; 2=mujer
+2022,100,p1142,True,su hogar tiene: telefono celular,0=pase; 1=telefono celular
+2022,100,p1144,True,su hogar tiene: conexion a internet,0=pase; 1=conexion a internet
+2022,100,p114b1,False,,
+2022,100,panel,True,¿el hogar fue entrevistado el año pasado?,1=si; 2=no
+2022,100,tipoentrevista,False,,
+2022,100,nbi1,True,vivienda inadecuada (necesidad basica insatisfecha 1 ),0=vivienda adecuada; 1=vivienda inadecuada
+2022,100,result,True,resultado final de la encuesta,1=completa; 2=incompleta; 3=rechazo; 4=ausente; 5=vivienda desocupada; 6=no se inicio la entrevista; 7=otro
+2022,612,p612n,True,equipamiento del hogar,7=computadora/laptop; 28=tablet
+2022,612,p612,True,¿su hogar tiene:?,1=si; 2=no
+2022,sumaria,pobreza,True,pobreza,1=pobre extremo; 2=pobre no extremo; 3=no pobre
+2023,300,p300a,True,¿cual es el idioma o lengua materna que aprendio en su niñez?,1=quechua; 2=aimara; 3=otra lengua nativa; 4=castellano; 6=portugues; 7=otra lengua extranjera; 8=no escucha/no habla; 9=lengua de señas peruanas; 10=ashaninka; 11=awajun/aguarun; 12=shipibo – konibo; 13=shawi/chayahuita; 14=matsigenka/machiguenga; 15=achuar
+2023,300,p301a,True,¿cual es el ultimo año o grado de estudios y nivel que aprobo? - nivel,1=sin nivel; 2=educacion inicial; 3=primaria incompleta; 4=primaria completa; 5=secundaria incompleta; 6=secundaria completa; 7=superior no universitaria incompleta; 8=superior no universitaria completa; 9=superior universitaria incompleta; 10=superior universitaria completa; 11=maestria / doctorado; 12=basica especial
+2023,300,p306,True,"este año, ¿esta matriculado en algun centro o programa de educacion basica o sup",1=si; 2=no
+2023,300,p303,True,"el año pasado (...), ¿estuvo matriculado en algun centro o programa de educacion",1=si; 2=no
+2023,300,p305,True,el resultado que obtuvo el año pasado (...) fue :,"1=aprobado; 2=desaprobado; 3=retirado; 4=otro; 5=no aprueba, ni desaprueba (inicial)"
+2023,300,p313,True,¿cual es la principal razon por la que no esta matriculado o no asiste a algun c,1=problemas economicos; 2=estoy trabajando; 3=termino sus estudios: secundarios/ superiores /asiste a academia preuniversitaria; 4=no tiene la edad suficiente (para el grupo 3-5 años); 5=problemas familiares; 6=de vacaciones; 7=no existe centro de educacion basica o superior en el centro poblado; 8=asiste a un centro de educacion tecnico productiva; 9=no me interesa/no me gusta el estudio; 10=se dedica a los quehaceres del hogar; 11=otra razon
+2023,200,p203,True,¿cual es la relacion de parentesco con el jefe(a) del hogar,0=panel; 1=jefe/jefa; 2=esposo(a)/compañero(a); 3=hijo(a)/hijastro(a); 4=yerno/nuera; 5=nieto(a); 6=padres/suegros; 7=otros parientes; 8=trabajador hogar; 9=pensionista; 10=otros no parientes; 11=hermano(a)
+2023,200,p204,True,¿es miembro del hogar?,1=si; 2=no
+2023,200,p205,True,¿se encuentra ausente del hogar 30 dias o mas?,1=si; 2=no
+2023,200,p207,True,sexo,1=hombre; 2=mujer
+2023,100,p1142,True,su hogar tiene: telefono celular,0=pase; 1=telefono celular
+2023,100,p1144,True,su hogar tiene: conexion a internet,0=pase; 1=conexion a internet
+2023,100,p114b1,True,conexion a internet a traves de : conexion fija,0=pase; 1=conexion fija
+2023,100,panel,True,¿el hogar fue entrevistado el año pasado?,1=si; 2=no
+2023,100,tipoentrevista,False,,
+2023,100,nbi1,True,vivienda inadecuada (necesidad basica insatisfecha 1 ),0=vivienda adecuada; 1=vivienda inadecuada
+2023,100,result,True,resultado final de la encuesta,1=completa; 2=incompleta; 3=rechazo; 4=ausente; 5=vivienda desocupada; 6=no se inicio la entrevista; 7=otro
+2023,612,p612n,True,equipamiento del hogar,7=computadora/laptop; 28=tablet
+2023,612,p612,True,¿su hogar tiene:?,1=si; 2=no
+2023,sumaria,pobreza,True,pobreza,1=pobre extremo; 2=pobre no extremo; 3=no pobre
+2024,300,p300a,True,¿cual es el idioma o lengua materna que aprendio en su niñez?,1=quechua; 2=aimara; 3=otra lengua nativa; 4=castellano; 6=portugues; 7=otra lengua extranjera; 8=no escucha/no habla; 9=lengua de señas peruanas; 10=ashaninka; 11=awajun/aguaruna; 12=shipibo – konibo; 13=shawi/chayahuita; 14=matsigenka/machiguenga; 15=achuar
+2024,300,p301a,True,¿cual es el ultimo año o grado de estudios y nivel que aprobo? nivel,1=sin nivel; 2=educacion inicial; 3=primaria incompleta; 4=primaria completa; 5=secundaria incompleta; 6=secundaria completa; 7=superior no universitaria incompleta; 8=superior no universitaria completa; 9=superior universitaria incompleta; 10=superior universitaria completa; 11=maestria / doctorado; 12=basica especial
+2024,300,p306,True,"este año, ¿esta matriculado en algun centro o programa de educacion basica o sup",1=si; 2=no
+2024,300,p303,True,el año pasado ¿estuvo matriculado en algun centro o programa de educacion basica,1=si; 2=no
+2024,300,p305,True,el resultado que obtuvo el año pasado (...) fue :,"1=aprobado; 2=desaprobado; 3=retirado; 4=otro; 5=no aprueba, ni desaprueba (inicial)"
+2024,300,p313,True,¿cual es la principal razon por la que no esta matriculado o no asiste a algun c,1=problemas economicos; 2=estoy trabajando; 3=termino sus estudios: secundarios/ superiores /asiste a academia preuniversitaria; 4=no tiene la edad suficiente (para el grupo 3-5 años); 5=problemas familiares; 6=de vacaciones; 7=no existe centro de educacion basica o superior en el centro poblado; 8=asiste a un centro de educacion tecnico productiva; 9=no me interesa/no me gusta el estudio; 10=se dedica a los quehaceres del hogar; 11=otra razon
+2024,200,p203,True,¿cual es la relacion de parentesco con el jefe(a) del hogar,0=panel; 1=jefe/jefa; 2=esposo(a)/compañero(a); 3=hijo(a)/hijastro(a); 4=yerno/nuera; 5=nieto(a); 6=padres/suegros; 7=otros parientes; 8=trabajador hogar; 9=pensionista; 10=otros no parientes; 11=hermano(a)
+2024,200,p204,True,¿es miembro del hogar?,1=si; 2=no
+2024,200,p205,True,¿se encuentra ausente del hogar 30 dias o mas?,1=si; 2=no
+2024,200,p207,True,sexo,1=hombre; 2=mujer
+2024,100,p1142,True,su hogar tiene: telefono celular,0=pase; 1=telefono celular
+2024,100,p1144,True,su hogar tiene: conexion a internet,0=pase; 1=conexion a internet
+2024,100,p114b1,True,conexion a internet a traves de : conexion fija,0=pase; 1=conexion fija
+2024,100,panel,True,¿el hogar fue entrevistado el año pasado?,1=si; 2=no
+2024,100,tipoentrevista,False,,
+2024,100,nbi1,True,vivienda inadecuada (necesidad basica insatisfecha 1 ),0=vivienda adecuada; 1=vivienda inadecuada
+2024,100,result,True,resultado final de la encuesta,1=completa; 2=incompleta; 3=rechazo; 4=ausente; 5=vivienda desocupada; 6=no se inicio la entrevista; 7=otro
+2024,612,p612n,True,equipamiento del hogar,7=computadora/laptop; 28=tablet
+2024,612,p612,True,¿su hogar tiene:?,1=si; 2=no
+2024,sumaria,pobreza,True,pobreza,1=pobre extremo; 2=pobre no extremo; 3=no pobre
+2025,300,p300a,True,Cual es el Idioma o lengua materna que aprendio en su niñez,1=Quechua; 2=Aimara; 3=Otra lengua nativa; 4=Castellano; 6=Portugues; 7=Otra lengua extranjera; 8=No escucha/no habla; 9=Lengua de señas peruanas; 10=Ashaninka; 11=Awajun/Aguarun; 12=Shipibo – Konibo; 13=Shawi/Chayahuita; 14=Matsigenka/Machiguenga; 15=Achuar
+2025,300,p301a,True,Cual es el ultimo año o grado de estudios y nivel que aprobo Nivel,1=Sin nivel; 2=Educacion inicial; 3=Primaria incompleta; 4=Primaria completa; 5=Secundaria incompleta; 6=Secundaria completa; 7=Superior no univ. Incompleta; 8=Superior no univ. completa; 9=Superior univ. incompleta; 10=Superior univ. completa; 11=Maestria / Doctorado; 12=Basica especial
+2025,300,p306,True,"Este año, esta matriculado en algun centro o Prog. de educacion basica o superior",1=Si; 2=No
+2025,300,p303,True,"El año pasado, estuvo matriculado en algun centro o Prog. de educacion basica o superior",1=Si; 2=No
+2025,300,p305,True,El resultado que obtuvo el año pasado fue :,"1=Aprobado; 2=Desaprobado; 3=Retirado; 4=Otro; 5=No aprueba, ni desaprueba (inicial)"
+2025,300,p313,True,Cual es la principal razon por la que no esta matriculado o no asiste a algun ctro. o prog. de educacion...,1=Problemas economicos; 2=Estoy trabajando; 3=Termino sus estudios: secundarios/ superiores /asiste a academia preuniv.; 4=No tiene la edad suficiente (para el grupo 3-5 años); 5=Problemas familiares; 6=De vacaciones; 7=No existe centro de educacion basica o superior en el centro poblado; 8=Asiste a un centro de educacion tecnico productiva; 9=No me interesa/no me gusta el estudio; 10=Se dedica a los quehaceres del hogar; 11=Otra razon
+2025,200,p203,True,Cual es la relacion de parentesco con el jefe(a) del hogar,0=Panel; 1=Jefe/Jefa; 2=Esposo(a)/compañero(a); 3=Hijo(a)/Hijastro(a); 4=Yerno/Nuera; 5=Nieto(a); 6=Padres/Suegros; 7=Otros parientes; 8=Trabajador Hogar; 9=Pensionista; 10=Otros no parientes; 11=Hermano(a)
+2025,200,p204,True,Es miembro del hogar,1=Si; 2=No
+2025,200,p205,True,Se encuentra ausente del hogar 30 dias o mas,1=Si; 2=No
+2025,200,p207,True,Sexo,1=Hombre; 2=Mujer
+2025,100,p1142,True,su hogar tiene: telefono celular,0=pase; 1=telefono celular
+2025,100,p1144,True,su hogar tiene: conexion a internet,0=pase; 1=conexion a internet
+2025,100,p114b1,True,conexion a internet a traves de: conexion fija,0=pase; 1=conexion fija
+2025,100,panel,True,el hogar fue entrevistado el año pasado,1=si; 2=no
+2025,100,tipoentrevista,False,,
+2025,100,nbi1,True,vivienda inadecuada (necesidad basica insatisfecha 1),0=vivienda adecuada; 1=vivienda inadecuada
+2025,100,result,True,resultado final de la encuesta,1=completa; 2=incompleta; 3=rechazo; 4=ausente; 5=vivienda desocupada; 6=no se inicio la entrevista; 7=otro
+2025,612,p612n,True,Equipamiento del hogar,7=Computadora/laptop; 28=Tablet
+2025,612,p612,True,Su hogar tiene:,1=Si; 2=No
+2025,sumaria,pobreza,True,Pobreza,1=Pobre Extremo; 2=Pobre No Extremo; 3=No Pobre

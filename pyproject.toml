@@ -1,0 +1,24 @@
+[project]
+name = "nonenrollment-peru"
+version = "2.0.0"
+description = "Temporal robustness and subgroup calibration of explainable models of school non-enrollment in Peru (ENAHO 2017-2025)"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Edgar Jeferson Cusihuaman Garate" }]
+dependencies = [
+  "pandas>=3.0", "numpy>=2.0", "scipy>=1.14", "scikit-learn>=1.6", "xgboost>=3.0", "shap>=0.48",
+  "statsmodels>=0.14", "pyreadstat>=1.2", "pyarrow>=17", "matplotlib>=3.9",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.setuptools]
+packages = ["src", "src.data", "src.preprocessing", "src.modeling", "src.validation", "src.calibration", "src.explainability", "src.evaluation"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 160

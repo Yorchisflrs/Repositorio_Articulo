@@ -1,0 +1,29 @@
+{
+ "p306_coded_1_yes_2_no_every_year": true,
+ "p300a_codes_10_15_only_from_2020": true,
+ "p306_values_only_1_2": true,
+ "analytic_n": 84502,
+ "analytic_non_enrolled": 3607,
+ "month_artefact_jan_feb_above_50pct": true,
+ "april_december_between_3_and_5pct": true,
+ "internet_item_jump_2022_2023_points": 38.8,
+ "fixed_connection_2022_vs_2023_points": -28.4,
+ "weights_all_positive": true,
+ "missing_weights": 0,
+ "max_missing_share_any_feature_year": 0.0314,
+ "age_range_ok": true,
+ "overage_range": [
+  -2.0,
+  11.0
+ ],
+ "school_years_range": [
+  0.0,
+  10.0
+ ],
+ "negative_overage_share": 0.03917067051667416,
+ "head_age_below_15": 0,
+ "hh_size_max": 21.0,
+ "n_kids_zero_or_missing": 0,
+ "p313_answered_share_among_non_enrolled": 1.0,
+ "enrolled_last_year_share_among_non_enrolled (P303=1)": 0.2899916828389243
+}

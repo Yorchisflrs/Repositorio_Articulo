@@ -1,0 +1,29 @@
+# ENAHO microdata and everything derived at person level stay out of the repository
+data/raw
+data/raw/
+data/processed/*.parquet
+data/processed/*.npz
+data/processed/models/
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+*.egg-info/
+# LaTeX build files
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.bbl
+paper/*.blg
+paper/*.synctex.gz
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+!data/processed/README.md
+paper/build/
+paper/manuscript.pdf

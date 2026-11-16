@@ -1,0 +1,38 @@
+CV 2017-2019 done
+2020 done
+2021 done
+2022 done
+2023 done
+2024 done
+2025 done
+in-year reference 2020
+in-year reference 2021
+in-year reference 2022
+in-year reference 2023
+in-year reference 2024
+in-year reference 2025
+model            LR     RF    XGB
+test_set                         
+2020          0.821  0.831  0.837
+2021          0.887  0.904  0.899
+2022          0.924  0.937  0.937
+2023          0.909  0.929  0.928
+2024          0.868  0.898  0.883
+2025          0.869  0.883  0.888
+CV 2017-2019  0.918  0.926  0.930
+model           LR    RF   XGB
+test_set                      
+2020          0.37  0.37  0.41
+2021          0.38  0.42  0.43
+2022         -0.01  0.04  0.03
+2023         -0.13 -0.04 -0.06
+2024         -0.07  0.00  0.01
+2025         -0.09  0.05  0.04
+CV 2017-2019 -0.03 -0.03 -0.04
+ year  prevalence_ratio  domain_classifier_auc  psi_max                                                psi_top3
+ 2020             1.149                  0.687    0.095         poor=0.095; extreme_poor=0.034; hh_mobile=0.028
+ 2021             1.225                  0.634    0.034       hh_size=0.034; head_female=0.034; hh_mobile=0.033
+ 2022             0.877                  0.650    0.066         overage=0.066; hh_size=0.036; head_female=0.035
+ 2023             0.711                  0.679    0.106         overage=0.106; head_female=0.056; hh_size=0.042
+ 2024             0.773                  0.694    0.124          overage=0.124; head_female=0.058; n_kids=0.053
+ 2025             0.739                  0.709    0.153 overage=0.153; head_female=0.075; head_educ_years=0.058

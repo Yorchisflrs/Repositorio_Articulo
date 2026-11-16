@@ -1,0 +1,44 @@
+   t  baseline_enrolled_12_16  code_found_next_year  share_found  same_cluster  sex_age_consistent  valid_followup  not_enrolled_next_year  incidence  completed_secondary_next_year
+2017                     8686                  2340        0.269           1.0               0.996            2073                      47      0.024                            197
+2018                     9451                  2356        0.249           1.0               0.998            2243                      41      0.015                            185
+2019                     8625                  2450        0.284           1.0               0.995            2332                      54      0.023                            266
+2020                     9016                  2464        0.273           1.0               0.995            2255                      51      0.021                            255
+2021                     8185                  2283        0.279           1.0               0.995            2044                      30      0.011                            251
+2022                     8136                  2134        0.262           1.0               1.000            1976                      28      0.011                            196
+2023                     8116                  2065        0.254           1.0               0.997            1951                      28      0.012                            173
+2024                     7676                  2052        0.267           1.0               0.997            1950                      31      0.011                            181
+     variable  followed  not_followed  std_diff     a
+child_of_head     0.885         0.864     0.066 0.066
+ exp_quintile     2.971         3.058    -0.061 0.061
+        rural     0.286         0.258     0.055 0.055
+        dom_8     0.270         0.283    -0.045 0.045
+  head_female     0.291         0.308    -0.038 0.038
+        dom_5     0.152         0.137     0.038 0.038
+                                    period model                                                                      approach     n  events   auc  auc_lo  auc_hi  prauc  prev
+        t in 2017-2019 (score out-of-fold)    LR                                   Status score at t (no prospective training)  6648     142 0.827   0.775   0.869  0.181 0.021
+        t in 2017-2019 (score out-of-fold)    RF                                   Status score at t (no prospective training)  6648     142 0.828   0.772   0.871  0.175 0.021
+        t in 2017-2019 (score out-of-fold)   XGB                                   Status score at t (no prospective training)  6648     142 0.835   0.784   0.879  0.153 0.021
+        t in 2017-2019 (score out-of-fold) Score                                                    Age-grade distortion alone  6648     142 0.796   0.724   0.854  0.153   NaN
+        t in 2017-2019 (score out-of-fold)   XGB                                   Status score at t, unweighted (sensitivity)  6648     142 0.840   0.810   0.868  0.111 0.021
+t in 2020-2024 (frozen score, out of time)    LR                                   Status score at t (no prospective training) 10176     168 0.811   0.766   0.849  0.058 0.013
+t in 2020-2024 (frozen score, out of time)    RF                                   Status score at t (no prospective training) 10176     168 0.809   0.761   0.852  0.067 0.013
+t in 2020-2024 (frozen score, out of time)   XGB                                   Status score at t (no prospective training) 10176     168 0.815   0.769   0.853  0.064 0.013
+t in 2020-2024 (frozen score, out of time) Score                                                    Age-grade distortion alone 10176     168 0.771   0.721   0.819  0.054   NaN
+t in 2020-2024 (frozen score, out of time)   XGB                                   Status score at t, unweighted (sensitivity) 10176     168 0.793   0.762   0.826  0.073 0.017
+                       All pairs 2017-2024    LR                                   Status score at t (no prospective training) 16824     310 0.820   0.784   0.850  0.111 0.016
+                       All pairs 2017-2024    RF                                   Status score at t (no prospective training) 16824     310 0.820   0.784   0.849  0.117 0.016
+                       All pairs 2017-2024   XGB                                   Status score at t (no prospective training) 16824     310 0.826   0.792   0.855  0.108 0.016
+                       All pairs 2017-2024 Score                                                    Age-grade distortion alone 16824     310 0.783   0.739   0.823  0.095   NaN
+                       All pairs 2017-2024   XGB                                   Status score at t, unweighted (sensitivity) 16824     310 0.816   0.794   0.837  0.088 0.018
+t in 2020-2024 (frozen score, out of time)    LR                              Prospective model trained on pairs t<=2019: Full 10176     168 0.824   0.788   0.860  0.069 0.013
+                       All pairs 2017-2024    LR                                    Prospective model, grouped 5-fold CV: Full 16824     310 0.839   0.805   0.868  0.100 0.016
+t in 2020-2024 (frozen score, out of time)    LR      Prospective model trained on pairs t<=2019: Without schooling trajectory 10176     168 0.773   0.728   0.816  0.040 0.013
+                       All pairs 2017-2024    LR            Prospective model, grouped 5-fold CV: Without schooling trajectory 16824     310 0.762   0.723   0.800  0.048 0.016
+t in 2020-2024 (frozen score, out of time)    LR Prospective model trained on pairs t<=2019: Age and schooling trajectory only 10176     168 0.774   0.726   0.822  0.060 0.013
+                       All pairs 2017-2024    LR       Prospective model, grouped 5-fold CV: Age and schooling trajectory only 16824     310 0.787   0.741   0.829  0.123 0.016
+t in 2020-2024 (frozen score, out of time)   XGB                              Prospective model trained on pairs t<=2019: Full 10176     168 0.817   0.774   0.858  0.072 0.013
+                       All pairs 2017-2024   XGB                                    Prospective model, grouped 5-fold CV: Full 16824     310 0.832   0.800   0.864  0.089 0.016
+t in 2020-2024 (frozen score, out of time)   XGB      Prospective model trained on pairs t<=2019: Without schooling trajectory 10176     168 0.732   0.666   0.797  0.037 0.013
+                       All pairs 2017-2024   XGB            Prospective model, grouped 5-fold CV: Without schooling trajectory 16824     310 0.740   0.694   0.779  0.044 0.016
+t in 2020-2024 (frozen score, out of time)   XGB Prospective model trained on pairs t<=2019: Age and schooling trajectory only 10176     168 0.774   0.724   0.822  0.060 0.013
+                       All pairs 2017-2024   XGB       Prospective model, grouped 5-fold CV: Age and schooling trajectory only 16824     310 0.777   0.730   0.820  0.124 0.016

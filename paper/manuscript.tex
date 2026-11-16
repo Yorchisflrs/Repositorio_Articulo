@@ -1,0 +1,212 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\graphicspath{{figures/}{../results/figures/}}
+
+% Every number in the text is read from generated/numbers.tex, written by scripts/10_generate_outputs.py.
+\makeatletter
+\newcommand{\setval}[2]{\expandafter\gdef\csname val@#1\endcsname{#2}}
+\newcommand{\V}[1]{\@ifundefined{val@#1}{\errmessage{Undefined manuscript number: #1}}{\csname val@#1\endcsname}}
+\makeatother
+\input{generated/numbers}
+
+% Author e-mail: to be supplied by the author before submission (see README_PAPER.md).
+\newcommand{\authoremail}{EMAIL-PENDIENTE}
+
+\begin{document}
+
+\title{Predicting School Non-Enrollment in Peru Before and After COVID-19: Temporal Robustness and Subgroup Calibration of Explainable Machine Learning}
+
+\author{\IEEEauthorblockN{Edgar Jeferson Cusihuaman Garate}
+\IEEEauthorblockA{\textit{Facultad de Ingenier\'ia Estad\'istica e Inform\'atica} \\
+\textit{Universidad Nacional del Altiplano}\\
+Puno, Peru \\
+\authoremail}
+}
+
+\maketitle
+
+\begin{abstract}
+Models of school disengagement are usually trained and tested on data from a single period, which says little about their behavior after a shock such as COVID-19. Using nine rounds (2017--2025) of the Peruvian National Household Survey, we study \V{n.total} adolescents aged 12--17 without completed secondary school and classify current-year non-enrollment. Logistic regression, random forest and XGBoost were tuned by nested cross-validation on 2017--2019 and applied without refitting to each year from 2020 to 2025, with population-weighted metrics and a stratified cluster bootstrap. XGBoost reached a ROC-AUC of \V{perf.XGB.cv.auc} in the training period and \V{perf.XGB.2020.auc} in 2020, indistinguishable from a model fitted within 2020 (\V{inyear.XGB.2020.auc}): the year was harder, not the model stale. Calibration failed instead, with risk under-predicted in 2020--2021 as prevalence rose, and recovered without updating from 2022; recalibrating on the previous year over-corrected. After the pandemic, overall calibration concealed under-prediction for rural and Indigenous-language adolescents and over-prediction for urban ones (calibration-in-the-large gap \V{gap.post.XGB.rural-urban.citl}). Most non-enrolled adolescents had already been out of school the year before; discrimination was \V{type.post.XGB.pers.auc} for persistent and \V{type.post.XGB.inc.auc} for incident non-enrollment, and \V{panel.oot.XGB.status.auc} for non-enrollment one year ahead in the survey panel. Survey-based models of this kind recognize adolescents already outside school far better than they anticipate who will leave, and their calibration should be monitored over time and across groups.
+\end{abstract}
+
+\begin{IEEEkeywords}
+educational data mining, learning analytics, temporal validation, calibration, dataset shift, explainable machine learning, household surveys, school non-enrollment
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+Peru has nearly universal enrollment in primary education, but a share of adolescents still leaves the school system before finishing secondary school, and the risk is unevenly distributed between urban and rural areas and among socioeconomic groups. Identifying adolescents at risk is a natural task for machine learning, and several Latin American studies have built such models from administrative or survey data \cite{rodriguez2023,adelman2018,jacha2024,jimenez2024}. One of them used the Peruvian National Household Survey (ENAHO) to predict school dropout from sociodemographic variables \cite{jacha2024}.
+
+A model built for policy use is valuable only if it keeps working when conditions change. In 2020 and 2021 Peruvian schools moved to remote instruction, household incomes fell, dropout became a policy concern \cite{gallego2025} and ENAHO itself replaced face-to-face visits with telephone interviews for several months. A model trained before the pandemic may lose discrimination, become miscalibrated or fail unevenly across groups, a problem known as dataset shift \cite{moreno2012}. Most educational prediction studies, however, report performance on a random split of a single period, which hides these effects. Calibration is rarely reported, even though risk scores used to allocate support must mean what they say \cite{vancalster2019}, and fairness audits are still uncommon in this literature \cite{baker2022}.
+
+A second question is seldom asked of survey-based models: what the outcome measures. A household survey records whether an adolescent is enrolled in the year of the interview, together with predictors observed in that same interview. A model fitted to such data classifies a current condition. Whether it also anticipates who will leave school is an empirical matter that the usual accuracy figures do not settle.
+
+This paper asks whether a model of adolescent school non-enrollment trained on pre-pandemic ENAHO data (2017--2019) remains accurate and well calibrated in 2020--2025, whether its errors fall disproportionately on rural, poor or Indigenous-language adolescents, and how much of its accuracy survives when the outcome is restricted to adolescents who were enrolled the year before. We build a nine-year analytic file from official microdata with a documented harmonization of every predictor. We evaluate logistic regression, random forest and XGBoost under forward temporal validation over six post-training years, with population-weighted metrics and intervals from a bootstrap that respects the strata and clusters of the sample. We compare the frozen model with models refitted inside each test year, which separates a harder year from a stale model, and we test recalibration and retraining under a rolling origin. We audit discrimination, calibration and recall by area, poverty, mother tongue and sex with paired intervals. Finally, we use item P303 of the survey and its panel component to separate persistent from incident non-enrollment and to build a prospective outcome one year ahead.
+
+\section{Related Work}
+
+Predicting school leaving has a long history. Bowers \textit{et al.} compared 110 dropout flags from 36 studies with ROC analysis and found that most flags, although precise, identify only part of the students who eventually drop out \cite{bowers2013}. Machine learning approaches based on student records \cite{lakkaraju2015,sansone2019} and on national administrative data in Chile, Guatemala and Honduras \cite{rodriguez2023,adelman2018} have improved accuracy, and educational data mining has become an established field \cite{romero2020}. These studies generally follow enrolled students forward, so their outcome is prospective by construction. Household and population surveys offer a different view because they include adolescents who are already outside the system. Jim\'enez-Guti\'errez \textit{et al.} combined Mexican open data, including household computer and internet ownership, to predict dropout \cite{jimenez2024}, and Khatun \textit{et al.} used 2019 MICS data from Bangladesh with SHAP and LIME \cite{khatun2025}.
+
+For Peru, econometric studies have related school progression and dropout to rural residence and sex \cite{cavero2011} and, in rural secondary schools, to adolescent work, schooling delay and repetition, with family economic problems as the reason most often given by those who left \cite{alcazar2009}. Jacha Rojas \textit{et al.} applied machine learning to ENAHO to predict dropout \cite{jacha2024}. Work on Peruvian rural schools during COVID-19 points to connectivity gaps as a source of exclusion \cite{anaya2021}. We found no study of this survey that examines temporal transfer, calibration, subgroup reliability or the distinction between prevalent and incident non-enrollment.
+
+Three methodological strands frame our design. The dataset-shift literature distinguishes changes in the distribution of predictors, in the base rate of the outcome and in the relation between them \cite{moreno2012}. Clinical prediction research treats calibration as a requirement for any model whose probabilities guide decisions \cite{vancalster2019}, has documented calibration drift over time in deployed models \cite{davis2017} and offers a ladder of updating methods, from re-estimating the intercept to refitting the model \cite{steyerberg2004}. In learning analytics, Baker and Hawn reviewed evidence that predictive models can perform unequally across demographic groups \cite{baker2022}, and Deho \textit{et al.} showed that dataset drift can change the fairness of a deployed model \cite{deho2024}. The third strand concerns survey data: estimates from a stratified cluster sample need the design in both the point estimate and its variance \cite{lumley2004}, and whether to use sampling weights when training a learner is an open question that depends on the purpose of the model \cite{macnell2023}.
+
+\section{Data}
+
+\subsection{Source and population}
+
+ENAHO is a continuous, stratified, multistage household survey conducted by the National Institute of Statistics and Informatics of Peru \cite{inei}. We use the annual files of 2017 to 2025 and five modules: dwelling and household, household members, education, household equipment and the household summary. Modules are joined on the official cluster, dwelling, household and person keys; no key is duplicated and every education record has its roster record.
+
+The population is household members aged 12 to 17 who were not absent from the dwelling for 30 days or more and had not completed secondary school. The outcome is item P306, which asks whether the person is enrolled in the current school year. Because the Peruvian school year starts in March and ENAHO is fielded all year, the answer depends on the interview month: \V{month.jan}\% of adolescents interviewed in January and \V{month.feb}\% of those interviewed in February are recorded as not enrolled, against \V{month.aprdec.min}--\V{month.aprdec.max}\% from April to December. We therefore keep April--December interviews. Of \V{n.roster} adolescents listed in the rosters, \V{n.total} remain, \V{ev.total} of them not enrolled (Table~\ref{tab:sample}).
+
+\begin{table}[t]
+\caption{Analytic sample and survey-weighted prevalence of non-enrollment by year.}
+\label{tab:sample}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\input{generated/table_sample}
+\par\vspace{2pt}
+\parbox{\columnwidth}{\scriptsize $^{\mathrm{a}}$Percentage of non-enrolled adolescents who were also not enrolled the previous year (item P303, survey-weighted). $^{\mathrm{b}}$Face-to-face interviews only; P303 was not asked by telephone.}
+\end{table}
+
+\subsection{What the outcome measures}
+
+Item P303 records enrollment in the previous year. Of the \V{p303.known} non-enrolled adolescents with a known answer, only \V{p303.incident} (\V{p303.incident.pct}\%) had been enrolled the year before; the other \V{p303.persistent} were already out of school, and the survey-weighted share of this group is between \V{p303.wshare.min}\% and \V{p303.wshare.max}\% in every year except 2020 (Table~\ref{tab:sample}). We call the first group incident and the second persistent. The outcome is therefore a prevalent condition dominated by spells that started earlier, and the predictors, measured in the same interview, may partly be consequences of those spells. We keep this outcome for the main analysis, because it is the one the survey supports in every year and the one prior work has used, and we examine its validity in Section~\ref{sec:target}.
+
+\subsection{Predictors and harmonization}
+
+The models use 26 predictors: age, sex, Indigenous mother tongue, completed years of schooling, age-grade distortion (age minus six minus years of schooling), kinship with the household head, mobile phone and computer at home, poverty and extreme poverty, per-capita expenditure quintile, education, sex and age of the head, household size, number of children, rural area, inadequate housing and eight geographic domains. Every predictor is defined from items with the same wording and codes in the nine years. The household-internet item is excluded because it is not comparable over time: it rises from \V{internet.2022}\% in 2022 to \V{internet.2023}\% in 2023, when the questionnaire began to count mobile data, while the fixed-connection item introduced that year stands at \V{internet.fixed.2023}\%. Missing values never exceed \V{missing.max}\% of a predictor in a year; LR and RF use training-period medians and XGBoost handles them natively.
+
+\section{Methods}
+
+\subsection{Models and tuning}
+
+We fit an L2-penalized logistic regression (LR), a random forest (RF) \cite{breiman2001} and gradient-boosted trees (XGBoost, XGB) \cite{chen2016}. Hyperparameters are chosen by nested cross-validation on 2017--2019, with five outer and three inner folds and the weighted area under the precision-recall curve as criterion. Folds are formed on the cluster code pooled across years, so a cluster revisited by the panel never falls on both sides of a split. Test years play no role in tuning. Each model is trained with and without the survey weights; the unweighted fit is the primary analysis and the two are compared in Section~\ref{sec:forward}.
+
+\subsection{Survey design and uncertainty}
+
+All metrics are population estimates computed with the person expansion factor. Intervals come from the rescaled bootstrap of Rao and Wu \cite{raowu1988,raowuyue1992} with 1,000 replicates: within each stratum with $n_h$ clusters, $n_h-1$ clusters are drawn with replacement and the weights are rescaled. The annual samples have between \V{design.psu.min} and \V{design.psu.max} clusters, and unequal weights alone imply a design effect of \V{design.deff.min} to \V{design.deff.max}, so intervals that ignore the design would be too narrow. When years are pooled, a cluster code is one resampling unit across years. Every comparison between models, strategies or groups is paired: both terms are computed with the same replicate weights and we report the interval of the difference. Models are held fixed, so intervals reflect test-sample uncertainty.
+
+\subsection{Metrics}
+
+Discrimination is measured with the area under the ROC curve (ROC-AUC) and under the precision-recall curve (PR-AUC), the second being more informative for a rare outcome \cite{saito2015}. Calibration is measured with the Brier score, calibration-in-the-large (CITL), which is the intercept of a logistic model of the outcome with the predicted log-odds as offset, and the calibration slope \cite{vancalster2019}. A positive CITL means that risk is under-predicted. As an operating point we flag adolescents above the weighted 90th percentile of out-of-fold risk in 2017--2019 and report recall and precision.
+
+\subsection{Experiments}
+
+E1 estimates in-period performance by nested cross-validation. E2 applies the models trained on 2017--2019, without refitting, to each year from 2020 to 2025; as a reference, a model with the same hyperparameters is cross-validated inside each test year, which gives the performance a fresh model reaches on that year. E3 compares updating strategies: re-estimating the intercept, intercept and slope, or retraining, first with 2022--2024 as fitting data and 2025 as test, then under a rolling origin in which year $t$ is predicted using only earlier years. E4 audits subgroups defined by area, poverty, mother tongue and sex in the training period, in 2020--2021 and in 2022--2025; groups with fewer than 50 events are not evaluated. E5 computes SHAP values with TreeSHAP \cite{lundberg2017,lundberg2020}. Age-grade distortion is an exact linear function of age and years of schooling, a case in which Shapley attributions to individual predictors are not uniquely meaningful \cite{aas2021}, so we report attributions for families of predictors and their variation over 30 refits on cluster-bootstrap samples. E6 refits the model without families of predictors and evaluates the outcome variants of Section~\ref{sec:target}.
+
+\section{Results}
+
+\subsection{In-period and forward-in-time performance}
+\label{sec:forward}
+
+Weighted non-enrollment was \V{prev.2019}\% in 2019, rose to \V{prev.2020}\% in 2020 and \V{prev.2021}\% in 2021, and fell to \V{prev.2025}\% in 2025 (Table~\ref{tab:sample}). Table~\ref{tab:perf} reports the three models in every evaluation set. In nested cross-validation XGB reaches a ROC-AUC of \V{perf.XGB.cv.auc} and a PR-AUC of \V{perf.XGB.cv.prauc}. Its advantage over LR is small but consistent, between \V{diff.xgb-lr.auc.min} and \V{diff.xgb-lr.auc.max} in ROC-AUC, with paired intervals that exclude zero in \V{diff.xgb-lr.auc.nsig} of the seven sets; XGB and RF differ by \V{diff.xgb-rf.auc.min} to \V{diff.xgb-rf.auc.max}, an interval that excludes zero in \V{diff.xgb-rf.auc.nsig} set only. Training with the survey weights changes ROC-AUC by at most \V{diff.xgbw-xgb.auc.absmax} and raises CITL by \V{diff.xgbw-xgb.citl.min} to \V{diff.xgbw-xgb.citl.max} in every set, which centers calibration in the training period and worsens it slightly in 2020--2021; neither choice dominates.
+
+\begin{table*}[t]
+\caption{Survey-weighted performance of the models trained on 2017--2019 and applied without refitting to each later year. CITL: calibration-in-the-large (logit scale, 0 ideal, positive when risk is under-predicted). Recall and precision at the threshold fixed on the training period. Brackets: 95\% design-based bootstrap intervals.}
+\label{tab:perf}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\input{generated/table_performance}
+\end{table*}
+
+Applied to later years without refitting, XGB falls to \V{perf.XGB.2020.auc} in 2020, recovers to \V{perf.XGB.2021.auc} in 2021 and \V{perf.XGB.2022.auc} in 2022, and stands at \V{perf.XGB.2024.auc} and \V{perf.XGB.2025.auc} in 2024 and 2025 (Fig.~\ref{fig:temporal}a). The same-year reference shows that the model did not age: a model cross-validated inside 2020 reaches \V{inyear.XGB.2020.auc}, a difference of \V{inyear.XGB.2020.diff} [\V{inyear.XGB.2020.diff.ci}] from the frozen one, and across the three models and six years the gap never exceeds \V{inyear.absdiff.max}. Some years, 2020 above all, are harder to classify for any model built on these predictors. In 2020 discrimination is lower in telephone interviews (\V{mode.tel.auc}, $n=$ \V{mode.tel.n}) than in face-to-face ones (\V{mode.f2f.auc}), but telephone interviewing covered April to September and face-to-face interviewing mostly the last quarter, so mode and calendar cannot be separated.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figure_01}
+\caption{Temporal behavior of the models trained on 2017--2019. CV: nested cross-validation on the training years. (a) ROC-AUC of the frozen XGBoost model and of a model cross-validated within each test year. (b) Calibration-in-the-large of the three frozen models; values above zero mean that risk is under-predicted. (c) Calibration-in-the-large of XGBoost under a rolling origin, where each year is predicted using earlier years only. Bars are 95\% design-based bootstrap intervals; the shaded band marks 2020--2021.}
+\label{fig:temporal}
+\end{figure*}
+
+Calibration is what broke. In 2020 and 2021 the three models under-predict risk, with a CITL of \V{perf.XGB.2020.citl.2} [\V{perf.XGB.2020.citl.ci.2}] and \V{perf.XGB.2021.citl.2} [\V{perf.XGB.2021.citl.ci.2}] for XGB, that is, \V{perf.XGB.2020.oe.2} and \V{perf.XGB.2021.oe.2} non-enrolled adolescents for each one predicted (Fig.~\ref{fig:temporal}b). From 2022 onward the intervals of CITL include zero for the three models in every year. The shift diagnostics point to the base rate: prevalence was \V{shift.2020.prevratio} and \V{shift.2021.prevratio} times the training level in 2020 and 2021 and \V{shift.2023.prevratio} to \V{shift.2022.prevratio} times afterwards, while the predictors moved little (a classifier separates training from test years with a ROC-AUC of \V{shift.domauc.min}--\V{shift.domauc.max}, and the largest population stability index is \V{shift.psi.max}). At the fixed threshold, XGB recall drops from \V{perf.XGB.cv.recall.2} in the training period to \V{perf.XGB.2020.recall.2} in 2020 and lies between \V{perf.XGB.2025.recall.2} and \V{perf.XGB.2022.recall.2} from 2021 on, with precision between \V{perf.XGB.2020.precision.2} and \V{perf.XGB.2021.precision.2}.
+
+\subsection{Updating the model}
+
+With 2022--2024 as fitting data and 2025 as test, recalibration has nothing to correct: the frozen XGB model has a CITL of \V{upd.XGB.frozen.citl.2} and the updated intercept leaves it at \V{upd.XGB.int.citl.2} (Table~\ref{tab:update}). Retraining on 2017--2024 raises ROC-AUC by \V{upd.XGB.reall.dauc} [\V{upd.XGB.reall.dauc.ci}], and retraining on 2022--2024 alone by \V{upd.XGB.re3.dauc} [\V{upd.XGB.re3.dauc.ci}]. The rolling origin gives the general picture (Fig.~\ref{fig:temporal}c). Re-estimating the intercept on the previous year repairs 2021 (CITL \V{roll.XGB.int.2021.citl.2} against \V{roll.XGB.frozen.2021.citl.2}) and then over-corrects 2022 (\V{roll.XGB.int.2022.citl.2} against \V{roll.XGB.frozen.2022.citl.2}), because it carries the pandemic level into a year in which prevalence had already fallen. Over 2022--2025 the mean absolute CITL is \V{roll.XGB.frozen.mae2225} for the frozen model, \V{roll.XGB.int.mae2225} with yearly intercept updates and \V{roll.XGB.reall.mae2225} with yearly retraining on all earlier data. The shock was transitory, and a model that was left alone ended up better calibrated than one that followed it.
+
+\begin{table}[t]
+\caption{Updating strategies for XGBoost fitted with 2022--2024 and evaluated on 2025. $\Delta$AUC: paired difference from the frozen model.}
+\label{tab:update}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\input{generated/table_updating}
+\end{table}
+
+\subsection{Subgroup reliability}
+
+Discrimination is similar across groups after the pandemic: ROC-AUC lies between \V{sub.post.XGB.auc.min} and \V{sub.post.XGB.auc.max} in the eight groups of Table~\ref{tab:sub}, and no paired gap in ROC-AUC has an interval that excludes zero. Calibration is not similar. The overall CITL of \V{sub.post.XGB.all.citl.2} hides under-prediction for rural adolescents (\V{sub.post.XGB.rural.citl.2} [\V{sub.post.XGB.rural.citl.ci.2}]) and over-prediction for urban ones (\V{sub.post.XGB.urban.citl.2} [\V{sub.post.XGB.urban.citl.ci.2}]), a gap of \V{gap.post.XGB.rural-urban.citl} [\V{gap.post.XGB.rural-urban.citl.ci}]. The gap for Indigenous mother tongue against Spanish is \V{gap.post.XGB.indig-spanish.citl} [\V{gap.post.XGB.indig-spanish.citl.ci}] and for girls against boys \V{gap.post.XGB.female-male.citl} [\V{gap.post.XGB.female-male.citl.ci}], while poor and non-poor adolescents are calibrated alike. In the training period none of these calibration gaps is distinguishable from zero for XGB (Fig.~\ref{fig:sub}). At the fixed threshold, recall among Indigenous-language adolescents is \V{sub.post.XGB.indig.recall.2} against \V{sub.post.XGB.spanish.recall.2} for Spanish speakers, a difference of \V{gap.post.XGB.indig-spanish.recall} [\V{gap.post.XGB.indig-spanish.recall.ci}]. LR and RF show the same three calibration gaps; for area they are \V{gap.post.LR.rural-urban.citl} and \V{gap.post.RF.rural-urban.citl}. An intercept fitted separately for each combination of area and mother tongue on 2022--2023 and applied to 2024--2025 moves the rural CITL from \V{grec.XGB.frozen.rural.citl.2} to \V{grec.XGB.cell.rural.citl.2} and the urban one from \V{grec.XGB.frozen.urban.citl.2} to \V{grec.XGB.cell.urban.citl.2}, raises rural recall from \V{grec.XGB.frozen.rural.recall.2} to \V{grec.XGB.cell.rural.recall.2} and leaves overall ROC-AUC practically unchanged (\V{grec.XGB.frozen.all.auc} and \V{grec.XGB.cell.all.auc}); a single global intercept changes almost nothing.
+
+\begin{table}[t]
+\caption{Reliability of the frozen XGBoost model by group, pooled 2022--2025 (survey-weighted, 95\% design-based intervals). Recall at the threshold fixed on 2017--2019.}
+\label{tab:sub}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\input{generated/table_subgroups}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figure_02}
+\caption{Calibration-in-the-large of the frozen XGBoost model by group in three periods, with 95\% design-based intervals. The training-period values use out-of-fold predictions.}
+\label{fig:sub}
+\end{figure}
+
+
+\subsection{Explanations}
+
+The model relies on one family of predictors. The mean absolute value of the summed SHAP contributions of age, years of schooling and age-grade distortion is \V{shap.fam.traj.train} on the log-odds scale in 2017--2019, against \V{shap.fam.hh.train} for the household socioeconomic predictors, \V{shap.fam.area.train} for area, \V{shap.fam.digital.train} for digital access and \V{shap.fam.indiv.train} for the remaining individual ones. Permuting that family on 2022--2025 lowers ROC-AUC by \V{perm.fam.traj.auc}, and permuting the household family by \V{perm.fam.hh.auc}. Within the family, risk rises steeply with distortion: in 2017--2019 the weighted non-enrollment rate is \V{dep.overage.0.rate}\% among adolescents at the normal grade for their age, \V{dep.overage.2.rate}\% two years behind and \V{dep.overage.3.rate}\% three years behind. The ordering of predictors hardly changed after the pandemic (Spearman correlation \V{shap.rho.trainpost} between periods), though the weight of the trajectory family fell slightly, to \V{shap.fam.traj.post}. Over \V{shap.refits} refits on cluster-bootstrap samples, age-grade distortion ranked first and age second every time, while predictors ranked third to tenth moved between positions \V{shap.rank.3to10.min} and \V{shap.rank.3to10.max}, so the order below the second place should not be interpreted.
+
+
+\subsection{What the score identifies}
+\label{sec:target}
+
+Table~\ref{tab:outcome} separates the outcome by its history. The frozen model recognizes persistent non-enrollment almost perfectly (ROC-AUC \V{type.post.XGB.pers.auc} in 2022--2025) and incident non-enrollment much less well (\V{type.post.XGB.inc.auc}, PR-AUC \V{type.post.XGB.inc.prauc} at a prevalence of \V{type.post.XGB.inc.prev.pct}\%). A model trained directly on the incident outcome does no better (\V{incmodel.XGB.full.post.auc}). The ablation agrees with this reading. Without years of schooling and age-grade distortion the ROC-AUC for the status outcome falls by \V{abl.XGB.notraj.dauc.absmin} to \V{abl.XGB.notraj.dauc.absmax} depending on the year and PR-AUC drops to \V{abl.XGB.notraj.prauc.ratio.min}--\V{abl.XGB.notraj.prauc.ratio.max}\% of its value, while age-grade distortion used alone as a score, with no model, already reaches \V{abl.score.auc.min}--\V{abl.score.auc.max}. Removing the two digital-access predictors, or adding either version of the internet item, changes ROC-AUC by at most \V{abl.XGB.nodigital.dauc.absmax}.
+
+\begin{table}[t]
+\caption{Discrimination of XGBoost by type of outcome (survey-weighted). Persistent: also not enrolled the previous year; incident: enrolled the previous year. Panel rows link adolescents enrolled in year $t$ to their enrollment in year $t+1$.}
+\label{tab:outcome}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\input{generated/table_outcome}
+\par\vspace{2pt}
+\parbox{\columnwidth}{\scriptsize $^{\mathrm{a}}$XGBoost trained on 2017--2019 with incident non-enrollment as outcome. $^{\mathrm{b}}$XGBoost trained on panel pairs with baseline in 2017--2019.}
+\end{table}
+
+The panel component allows a prospective check. Between \V{panel.found.min}\% and \V{panel.found.max}\% of enrolled adolescents aged 12--16 are found again the following year with the same person code, sex and a consistent age, which yields \V{panel.pairs} pairs and \V{panel.events} adolescents not enrolled one year later. The status score computed at baseline ranks them with a ROC-AUC of \V{panel.oot.XGB.status.auc} [\V{panel.oot.XGB.status.auc.ci}] for baselines in 2020--2024, and a model trained on pre-pandemic pairs for this outcome reaches \V{panel.oot.XGB.prosp.full.auc}. The score therefore carries information about the following year, but with a PR-AUC of \V{panel.oot.XGB.status.prauc} at a prevalence of \V{panel.oot.XGB.status.prev.pct}\% a flag raised for early warning would be wrong far more often than right.
+
+\section{Discussion}
+
+The frozen models kept most of their ability to rank adolescents through the pandemic. The drop in ROC-AUC in 2020 is real, but a model built inside that year does no better, so the year was harder rather than the model stale. What failed was calibration: the base rate of non-enrollment rose to \V{shift.2020.prevratio} and \V{shift.2021.prevratio} times its training level while the predictors barely moved, and every model under-predicted risk in 2020 and 2021. The miscalibration then disappeared without intervention as prevalence returned below its pre-pandemic level. This is the calibration drift described for deployed clinical models \cite{davis2017}, here produced by a transitory shock. The practical lesson concerns updating. The methods in the usual ladder \cite{steyerberg2004} assume that the recent past resembles the near future; during a shock that reverses within a year or two, re-estimating the intercept on the previous year imports a level that no longer holds, and the frozen model ends up better calibrated. Monitoring calibration every year and updating only when a shift persists seems a safer rule than updating on a schedule. XGBoost was better than logistic regression by \V{diff.xgb-lr.auc.min} to \V{diff.xgb-lr.auc.max} in ROC-AUC and differed little from the random forest, a modest margin in line with comparisons in other prediction domains \cite{christodoulou2019}.
+
+The subgroup audit shows why an overall calibration check is not enough. After the pandemic the model is well calibrated for the population as a whole, yet it under-predicts risk for rural and Indigenous-language adolescents and for boys and over-predicts it for urban adolescents and girls, gaps that were absent in the training period. A single threshold applied to these scores flags too few adolescents from the groups whose risk is understated, which in the case of mother tongue appears as lower recall. Group-specific adjustments can remove such gaps, but when base rates differ calibration within groups and equal error rates cannot in general be achieved together \cite{kleinberg2017}, and drift can change which groups a model serves worse \cite{deho2024}, so the choice of criterion belongs to whoever uses the scores. The mother-tongue gap should also be read with care, because the codes of that item changed in 2020.
+
+The outcome analysis limits what these models can be used for. Most adolescents counted as not enrolled had already left school a year earlier, and the predictors that carry the accuracy, years of schooling and age-grade distortion, describe a school trajectory that has already diverged. The same model is far weaker for incident non-enrollment and for non-enrollment one year ahead, and a model trained for those outcomes does not close the gap. Household-survey models of this kind are therefore suited to describing and monitoring the out-of-school population and to targeting re-enrollment efforts, not to early warning. This echoes the finding that most dropout flags identify only part of the students who later leave \cite{bowers2013}, and it is relevant to any model of this survey whose outcome is measured in the same interview as its predictors.
+
+The study has limitations. There are no school-side variables such as attendance or grades, which drive the best early-warning systems \cite{lakkaraju2015,sansone2019}. In 2020 the move to telephone interviews coincided with the lockdown months, so mode and calendar effects cannot be separated. Between \V{overlap.2021.cluster}\% and \V{overlap.2020.cluster}\% of the clusters of 2021 and 2020 had also been surveyed in the training years, which, if anything, favors the frozen model in those years. The panel analysis uses baseline weights because the files carry no longitudinal ones, and it describes the panel subsample. Finally, all associations described here are predictive and carry no causal meaning.
+
+\section{Conclusion}
+
+A model of school non-enrollment trained on Peruvian household-survey data from before COVID-19 discriminated as well as models refitted within each later year, lost its calibration during 2020 and 2021 because the base rate rose, and recovered it without updating once the shock receded; recalibrating each year on the previous one would have made it worse from 2022 on. Its overall calibration after the pandemic hides offsetting errors by area, mother tongue and sex, so calibration should be audited by group and over time. Above all, the model recognizes adolescents who are already out of school far better than it anticipates who will leave, and claims of early warning from survey-based models should be backed by an incident or prospective outcome. The code, configuration and result files will be released with the paper, and the microdata are public at INEI.
+
+
+
+\section*{Acknowledgment}
+The author used Claude Opus 5.5 and Claude Fable 5.2 (Anthropic), AI systems, to assist in writing the data-processing, modeling and evaluation code, producing the figures and tables, checking the references and drafting the text of all sections. The author reviewed the code, results, text and references and takes full responsibility for the content of this paper.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

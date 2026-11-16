@@ -1,0 +1,10 @@
+{
+ "prospective_LR": {
+  "C": 0.1
+ },
+ "prospective_XGB": "max_depth=2, 200 trees, learning rate 0.03 (fixed a priori; too few events to tune)",
+ "train_events": 142,
+ "test_events": 168,
+ "pairs": 16824,
+ "events": 310
+}

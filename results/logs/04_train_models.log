@@ -1,0 +1,7 @@
+LR_uw: nested AUC=0.9182 PR-AUC=0.4758 final={'C': 0.01} (6s)
+LR_w: nested AUC=0.9168 PR-AUC=0.4726 final={'C': 0.1} (7s)
+RF_uw: nested AUC=0.9258 PR-AUC=0.5076 final={'min_samples_leaf': 10, 'n_estimators': 300} (130s)
+RF_w: nested AUC=0.9221 PR-AUC=0.5025 final={'min_samples_leaf': 10, 'n_estimators': 300} (134s)
+XGB_uw: nested AUC=0.9297 PR-AUC=0.5262 final={'max_depth': 3, 'min_child_weight': 5, 'n_estimators': 300, 'learning_rate': 0.03, 'subsample': 0.8, 'colsample_bytree': 0.8, 'reg_lambda': 1.0} (156s)
+XGB_w: nested AUC=0.9267 PR-AUC=0.5122 final={'max_depth': 3, 'min_child_weight': 5, 'n_estimators': 300, 'learning_rate': 0.03, 'subsample': 0.8, 'colsample_bytree': 0.8, 'reg_lambda': 1.0} (143s)
+done

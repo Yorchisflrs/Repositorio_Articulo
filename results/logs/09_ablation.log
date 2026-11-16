@@ -1,0 +1,82 @@
+ablation XGB
+ablation LR
+incident XGB
+incident LR
+year                                                        2020   2021   2022   2023   2024   2025
+predictor_set                                                                                      
+Age and schooling trajectory only                          0.793  0.871  0.896  0.888  0.873  0.862
+Full + fixed internet connection                           0.839  0.899  0.938  0.928  0.884  0.888
+Full + household internet item (not comparable from 2023)  0.839  0.899  0.938  0.927  0.883  0.888
+Full model                                                 0.837  0.899  0.937  0.928  0.883  0.888
+Household and area only                                    0.724  0.766  0.797  0.791  0.727  0.778
+Without age and schooling trajectory                       0.731  0.767  0.810  0.806  0.733  0.780
+Without age-grade distortion                               0.845  0.897  0.940  0.930  0.884  0.891
+Without digital access                                     0.833  0.898  0.934  0.927  0.884  0.884
+Without schooling trajectory                               0.771  0.794  0.848  0.849  0.787  0.806
+year                                    2020   2021   2022   2023   2024   2025
+predictor_set                                                                  
+Age-grade distortion alone (no model)  0.781  0.872  0.875  0.863  0.845  0.845
+ year       n  non_enrolled  incident  persistent  p303_missing  weighted_share_persistent_among_known  incidence_among_enrolled_last_year  median_overage_incident  median_overage_persistent  median_overage_enrolled
+ 2017  9892.0         494.0     143.0       351.0           0.0                                  0.707                               0.014                      2.0                        4.0                      0.0
+ 2018 10547.0         467.0     146.0       321.0           0.0                                  0.677                               0.013                      2.0                        4.0                      0.0
+ 2019  9570.0         421.0     118.0       303.0           0.0                                  0.693                               0.012                      2.0                        3.0                      0.0
+ 2020 10022.0         460.0      73.0        94.0        6452.0                                  0.505                               0.021                      2.0                        4.0                      0.0
+ 2021  9169.0         478.0     144.0       334.0           0.0                                  0.672                               0.017                      1.0                        4.0                      0.0
+ 2022  9127.0         379.0     111.0       268.0           0.0                                  0.727                               0.010                      1.0                        4.0                      0.0
+ 2023  8997.0         297.0      96.0       201.0           0.0                                  0.706                               0.009                      2.0                        4.0                      0.0
+ 2024  8576.0         304.0      99.0       205.0           0.0                                  0.681                               0.010                      1.0                        3.0                      0.0
+ 2025  8602.0         307.0     116.0       191.0           0.0                                  0.629                               0.011                      1.0                        3.0                      1.0
+      period                     contrast     n  events   auc  auc_lo  auc_hi  prauc  prev
+CV 2017-2019 All non-enrolled vs enrolled 30009    1382 0.930   0.918   0.939  0.526 0.040
+CV 2017-2019       Persistent vs enrolled 29602     975 0.955   0.945   0.964  0.566 0.028
+CV 2017-2019         Incident vs enrolled 29034     407 0.871   0.846   0.894  0.117 0.013
+        2021 All non-enrolled vs enrolled  9169     478 0.899   0.864   0.929  0.590 0.049
+        2021       Persistent vs enrolled  9025     334 0.960   0.942   0.975  0.699 0.034
+        2021         Incident vs enrolled  8835     144 0.775   0.703   0.848  0.106 0.017
+   2022-2025 All non-enrolled vs enrolled 35302    1287 0.910   0.891   0.926  0.552 0.031
+   2022-2025       Persistent vs enrolled 34880     865 0.964   0.948   0.975  0.647 0.022
+   2022-2025         Incident vs enrolled 34437     422 0.790   0.749   0.831  0.072 0.010
+   2021-2025 All non-enrolled vs enrolled 44471    1765 0.906   0.890   0.920  0.561 0.035
+   2021-2025       Persistent vs enrolled 43905    1199 0.963   0.950   0.972  0.661 0.024
+   2021-2025         Incident vs enrolled 43272     566 0.785   0.749   0.818  0.077 0.011
+model                        predictor_set     test_set     n  events   auc  auc_lo  auc_hi  prauc  prev   citl
+  XGB                           Full model CV 2017-2019 28894     407 0.865   0.837   0.889  0.108 0.013  0.008
+  XGB                           Full model         2021  8790     144 0.783   0.704   0.854  0.143 0.017  0.486
+  XGB                           Full model    2022-2025 34272     422 0.787   0.745   0.825  0.090 0.010  0.027
+  XGB                           Full model    2021-2025 43062     566 0.785   0.749   0.823  0.103 0.011  0.140
+  XGB         Without schooling trajectory CV 2017-2019 28894     407 0.777   0.742   0.808  0.053 0.013  0.006
+  XGB         Without schooling trajectory         2021  8790     144 0.710   0.648   0.777  0.110 0.017  0.368
+  XGB         Without schooling trajectory    2022-2025 34272     422 0.767   0.729   0.802  0.057 0.010 -0.135
+  XGB         Without schooling trajectory    2021-2025 43062     566 0.751   0.718   0.783  0.071 0.011 -0.012
+  XGB Without age and schooling trajectory CV 2017-2019 28894     407 0.720   0.678   0.760  0.042 0.013  0.023
+  XGB Without age and schooling trajectory         2021  8790     144 0.735   0.669   0.800  0.099 0.017  0.418
+  XGB Without age and schooling trajectory    2022-2025 34272     422 0.749   0.710   0.784  0.051 0.010 -0.074
+  XGB Without age and schooling trajectory    2021-2025 43062     566 0.745   0.714   0.777  0.060 0.011  0.048
+  XGB    Age and schooling trajectory only CV 2017-2019 28894     407 0.818   0.773   0.856  0.090 0.013 -0.038
+  XGB    Age and schooling trajectory only         2021  8790     144 0.750   0.693   0.810  0.085 0.017  0.388
+  XGB    Age and schooling trajectory only    2022-2025 34272     422 0.743   0.711   0.776  0.057 0.010 -0.119
+  XGB    Age and schooling trajectory only    2021-2025 43062     566 0.743   0.714   0.774  0.062 0.011  0.005
+  XGB              Household and area only CV 2017-2019 28894     407 0.715   0.672   0.755  0.040 0.013  0.030
+  XGB              Household and area only         2021  8790     144 0.738   0.670   0.805  0.099 0.017  0.410
+  XGB              Household and area only    2022-2025 34272     422 0.741   0.704   0.776  0.044 0.010 -0.093
+  XGB              Household and area only    2021-2025 43062     566 0.740   0.709   0.771  0.056 0.011  0.031
+   LR                           Full model CV 2017-2019 28894     407 0.848   0.817   0.874  0.086 0.013  0.001
+   LR                           Full model         2021  8790     144 0.761   0.691   0.832  0.081 0.017  0.448
+   LR                           Full model    2022-2025 34272     422 0.777   0.738   0.813  0.068 0.010 -0.088
+   LR                           Full model    2021-2025 43062     566 0.771   0.737   0.806  0.069 0.011  0.042
+   LR         Without schooling trajectory CV 2017-2019 28894     407 0.781   0.744   0.813  0.047 0.013  0.007
+   LR         Without schooling trajectory         2021  8790     144 0.705   0.633   0.776  0.045 0.017  0.386
+   LR         Without schooling trajectory    2022-2025 34272     422 0.765   0.730   0.797  0.042 0.010 -0.168
+   LR         Without schooling trajectory    2021-2025 43062     566 0.747   0.716   0.779  0.041 0.011 -0.034
+   LR Without age and schooling trajectory CV 2017-2019 28894     407 0.715   0.671   0.757  0.038 0.013  0.021
+   LR Without age and schooling trajectory         2021  8790     144 0.698   0.639   0.766  0.036 0.017  0.422
+   LR Without age and schooling trajectory    2022-2025 34272     422 0.744   0.705   0.783  0.035 0.010 -0.126
+   LR Without age and schooling trajectory    2021-2025 43062     566 0.729   0.694   0.765  0.034 0.011  0.007
+   LR    Age and schooling trajectory only CV 2017-2019 28894     407 0.809   0.765   0.849  0.095 0.013 -0.062
+   LR    Age and schooling trajectory only         2021  8790     144 0.738   0.651   0.811  0.077 0.017  0.303
+   LR    Age and schooling trajectory only    2022-2025 34272     422 0.710   0.667   0.751  0.048 0.010 -0.208
+   LR    Age and schooling trajectory only    2021-2025 43062     566 0.718   0.681   0.760  0.054 0.011 -0.083
+   LR              Household and area only CV 2017-2019 28894     407 0.713   0.671   0.754  0.037 0.013  0.022
+   LR              Household and area only         2021  8790     144 0.705   0.645   0.776  0.039 0.017  0.414
+   LR              Household and area only    2022-2025 34272     422 0.733   0.696   0.771  0.034 0.010 -0.126
+   LR              Household and area only    2021-2025 43062     566 0.724   0.684   0.762  0.034 0.011  0.005

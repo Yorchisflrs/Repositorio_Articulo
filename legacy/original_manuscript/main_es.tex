@@ -1,0 +1,263 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot,es-noshorthands]{babel}
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\begin{document}
+
+\title{Predicción de la no matrícula escolar en el Perú antes y después de la COVID-19: robustez temporal y calibración por subgrupos de modelos de aprendizaje automático explicables}
+
+\author{\IEEEauthorblockN{Edgar Jeferson Cusihuaman Garate}
+\IEEEauthorblockA{\textit{Facultad de Ingeniería Estadística e Informática} \\
+\textit{Universidad Nacional del Altiplano}\\
+Puno, Perú \\
+EMAIL-PENDIENTE}
+}
+
+\maketitle
+
+\begin{abstract}
+Los modelos predictivos de desvinculación escolar suelen entrenarse y evaluarse con datos del mismo periodo, lo que dice poco sobre su comportamiento después de una disrupción como la COVID-19. Usamos nueve rondas anuales (2017--2025) de la Encuesta Nacional de Hogares (ENAHO) del Perú para estudiar a 84\,502 adolescentes de 12 a 17 años que no habían concluido la secundaria, y predecimos la no matrícula en el año en curso. La pregunta de matrícula depende del calendario escolar (el 81\% de las entrevistas de enero reporta no matrícula, frente a 3--5\% desde abril), por lo que solo se usan entrevistas de abril a diciembre. Se entrenaron regresión logística, bosque aleatorio y XGBoost con 2017--2019 y se aplicaron, sin reentrenar, a cada año de 2020 a 2025, con métricas ponderadas por el diseño muestral e intervalos bootstrap por conglomerados. XGBoost alcanzó un ROC-AUC de 0.929 en validación cruzada agrupada. Su discriminación cayó a 0.836 en 2020, sobre todo en hogares entrevistados por teléfono, y el modelo subestimó el riesgo en 2020 y 2021 (calibración global de 0.44--0.46 en escala logit). El desempeño se recuperó en 2022--2023 (AUC 0.930--0.940) y se mantuvo en 0.884--0.887 en 2024--2025; reentrenar con 2022--2024 añadió solo 0.010 en 2025. La discriminación fue similar entre subgrupos, pero el riesgo predicho fue demasiado bajo para los adolescentes rurales y para aquellos con lengua materna indígena, y estos últimos fueron identificados con menor frecuencia. El análisis SHAP muestra que el atraso escolar domina las predicciones, mientras que el acceso digital del hogar aporta poco una vez que se conoce el nivel socioeconómico. También documentamos una ruptura en la pregunta de internet del hogar de la ENAHO desde 2023, que eleva la conectividad medida de 57\% a 96\%.
+\end{abstract}
+
+\begin{IEEEkeywords}
+minería de datos educativos, analítica del aprendizaje, aprendizaje automático, IA explicable, validación temporal, calibración, no matrícula escolar, encuestas de hogares
+\end{IEEEkeywords}
+
+\section{Introducción}
+
+El Perú tiene una matrícula casi universal en educación primaria, pero una parte de los adolescentes todavía sale del sistema escolar antes de terminar la secundaria, y el riesgo se distribuye de forma desigual entre áreas urbanas y rurales y entre grupos socioeconómicos. La identificación temprana de adolescentes en riesgo es una tarea natural para el aprendizaje automático, y varios estudios latinoamericanos han construido modelos de este tipo con datos administrativos o de encuestas \cite{rodriguez2023,jacha2024,jimenez2024}. Uno de ellos usó la Encuesta Nacional de Hogares (ENAHO) del Perú para predecir la deserción escolar a partir de variables sociodemográficas \cite{jacha2024}.
+
+Un modelo construido para uso en política pública solo es valioso si sigue funcionando cuando cambian las condiciones. En 2020 y 2021 las escuelas peruanas pasaron a la enseñanza remota, los ingresos de los hogares cayeron y la propia ENAHO reemplazó las visitas presenciales por entrevistas telefónicas durante varios meses. Un modelo entrenado antes de la pandemia puede perder discriminación, descalibrarse o fallar de forma desigual entre grupos, un problema conocido como cambio en la distribución de los datos (\textit{dataset shift}) \cite{moreno2012}. Sin embargo, la mayoría de los estudios de predicción educativa reportan el desempeño sobre una partición aleatoria de un solo periodo, lo que oculta estos efectos. La calibración también se reporta poco, aunque los puntajes de riesgo usados para asignar apoyo deben significar lo que dicen \cite{vancalster2019}, y las auditorías de equidad todavía son poco comunes en esta literatura \cite{baker2022}.
+
+Este artículo pregunta si un modelo de no matrícula escolar adolescente entrenado con datos prepandemia de la ENAHO (2017--2019) sigue siendo preciso y bien calibrado en 2020--2025, y si sus errores recaen de manera desproporcionada en adolescentes rurales, pobres o de lengua indígena. Nuestras contribuciones son cuatro. Primero, construimos un archivo analítico reproducible de nueve años a partir de los microdatos oficiales de la ENAHO, con una armonización documentada de cada predictor, y mostramos que la pregunta de matrícula debe restringirse a las entrevistas de abril a diciembre, un paso que, hasta donde sabemos, los trabajos predictivos previos no han reportado. Segundo, evaluamos tres modelos con validación temporal hacia adelante en seis años posteriores al entrenamiento, con métricas ponderadas, intervalos bootstrap por conglomerados y medidas de calibración, y separamos los resultados de 2020 según la modalidad de entrevista. Tercero, auditamos la discriminación, la calibración y la sensibilidad por área, pobreza, lengua materna y sexo. Cuarto, usamos SHAP para comparar las explicaciones antes y después de la pandemia, y documentamos una ruptura de medición en la pregunta de internet del hogar que afecta a cualquier estudio de brecha digital basado en la ENAHO posterior a 2022.
+
+\section{Trabajos relacionados}
+
+La predicción del abandono escolar tiene una larga historia. Bowers \textit{et al.} compararon 110 indicadores de alerta de deserción provenientes de 36 estudios mediante análisis ROC y encontraron que la mayoría, aunque precisos, identifican solo a una parte de los estudiantes que finalmente desertan \cite{bowers2013}. Los enfoques de aprendizaje automático basados en registros estudiantiles \cite{lakkaraju2015,sansone2019} y, más recientemente, en trayectorias completas en datos administrativos nacionales \cite{rodriguez2023} han mejorado la exactitud, y la minería de datos educativos se ha consolidado como campo \cite{romero2020}. Las encuestas de hogares y de población ofrecen una perspectiva distinta porque incluyen a adolescentes que ya están fuera del sistema. Jiménez-Gutiérrez \textit{et al.} combinaron datos abiertos de México, incluida la tenencia de computadora e internet en el hogar, para predecir la deserción \cite{jimenez2024}, y Khatun \textit{et al.} usaron datos MICS 2019 de Bangladesh con SHAP y LIME \cite{khatun2025}.
+
+Para el Perú, estudios econométricos basados en encuestas de hogares y escolares han identificado la extraedad, la residencia rural, el trabajo infantil y la pobreza del hogar como correlatos del abandono escolar \cite{cavero2011,alcazar2009}. Jacha Rojas \textit{et al.} aplicaron aprendizaje automático a la ENAHO para predecir la deserción \cite{jacha2024}. Hasta donde sabemos, ninguno de estos estudios examina la transferencia temporal, la calibración o la confiabilidad por subgrupos. Los trabajos sobre escuelas rurales peruanas durante la COVID-19 señalan las brechas de conectividad como fuente de exclusión \cite{anaya2021}, lo que motiva evaluar si las variables de acceso digital aportan información predictiva más allá del nivel socioeconómico.
+
+Dos líneas metodológicas enmarcan nuestro diseño. La literatura sobre \textit{dataset shift} distingue cambios en la distribución de los predictores, en la tasa base del resultado y en la relación entre ambos \cite{moreno2012}, y cada uno deja una huella distinta en la discriminación y la calibración. La investigación en predicción clínica trata la calibración como un requisito para cualquier modelo cuyas probabilidades guían decisiones, y recomienda reportar la calibración global y la pendiente en cada nueva validación \cite{vancalster2019}. En educación, Baker y Hawn revisaron evidencia de que los modelos predictivos pueden tener un desempeño desigual entre grupos demográficos y propusieron auditorías rutinarias por subgrupos \cite{baker2022}. Nuestro estudio aplica estas ideas a una encuesta representativa a nivel nacional y a un periodo que contiene un choque grande y bien fechado.
+
+\section{Datos y metodología}
+
+\subsection{Fuente de datos y población}
+La ENAHO es una encuesta de hogares continua y representativa a nivel nacional, realizada por el Instituto Nacional de Estadística e Informática (INEI) con un diseño muestral estratificado, multietápico y por conglomerados \cite{inei}. Descargamos los archivos anuales en formato Stata de los módulos 100 (vivienda y hogar), 200 (miembros del hogar), 300 (educación), 612 (equipamiento del hogar) y la sumaria del hogar para 2017--2025, y los unimos mediante los identificadores de conglomerado, vivienda, hogar y persona.
+
+La variable objetivo es la respuesta a la pregunta P306, ``Este año, ¿está matriculado en algún centro o programa de educación básica o superior?''. La pregunta depende del calendario escolar. Entre los residentes habituales de 12 a 17 años sin secundaria completa, la proporción ponderada que respondió \textit{no} fue 81.3\% en enero, 51.6\% en febrero y 13.0\% en marzo, y entre 3.3\% y 4.5\% en cada mes de abril a diciembre. Por lo tanto, las entrevistas de enero y febrero capturan el periodo de vacaciones y no la desvinculación. La población analítica está formada por residentes habituales de 12 a 17 años que no habían concluido la secundaria y fueron entrevistados entre abril y diciembre. Esto da 84\,502 adolescentes, de los cuales 3\,607 no estaban matriculados. Usamos el término \textit{no matrícula} y no \textit{deserción} porque analizamos cada ronda anual como un corte transversal. La ENAHO vuelve a visitar una submuestra de viviendas (su componente panel), pero no enlazamos a las personas entre años, de modo que no podemos observar el momento en que dejan la escuela. Los archivos de 2020 incluyen una variable de modalidad de entrevista: el 64.3\% de la muestra analítica de 2020 fue entrevistada por teléfono, incluidas todas las entrevistas de abril a agosto, el 65\% en setiembre y ninguna de octubre a diciembre.
+
+\subsection{Predictores y armonización}
+Todos los predictores están disponibles en el momento de la entrevista, y cada uno se verificó en los cuestionarios y diccionarios de datos de las nueve rondas. La Tabla~\ref{tab:harm} presenta sus fuentes y los cambios encontrados. Las variables individuales son edad, sexo, lengua materna indígena (quechua, aimara o una lengua amazónica), años de escolaridad aprobados, atraso escolar (edad menos seis menos los años aprobados) y si el adolescente es hijo del jefe del hogar. Los años de escolaridad combinan el nivel (P301A) con el último grado de primaria (P301C) o el último año de secundaria (P301B) aprobado, porque la ENAHO registra ambos niveles en preguntas distintas. Las variables del hogar son los años de escolaridad, el sexo y la edad del jefe del hogar, el tamaño del hogar, el número de miembros menores de 18 años, la pobreza monetaria y la pobreza extrema, el quintil ponderado del gasto per cápita dentro de cada año, la vivienda inadecuada, la tenencia de computadora o laptop y de teléfono celular, la residencia rural y los ocho dominios geográficos de la ENAHO. Usamos quintiles de gasto dentro de cada año en lugar del gasto nominal para que la inflación no aparezca como una deriva artificial.
+
+\begin{table}[t]
+\caption{Armonización de las variables analíticas en la ENAHO 2017--2025.}
+\label{tab:harm}
+\centering
+\setlength{\tabcolsep}{2.5pt}
+\scriptsize
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{2.3cm}>{\raggedright\arraybackslash}p{3.6cm}}
+\toprule
+Variable & Fuente (módulo, pregunta) & Cambio detectado / decisión \\
+\midrule
+No matrícula (objetivo) & 300: P306 & Artefacto estacional ene--mar; solo abril--diciembre \\
+Edad, sexo, parentesco & 300: P208A, P207, P203 & Ninguno \\
+Lengua materna indígena & 300: P300A & Lenguas amazónicas con códigos propios desde 2020 (10--15); agrupadas \\
+Años de escolaridad, atraso escolar & 300: P301A, P301B, P301C & Grado de primaria en P301C, año de secundaria en P301B \\
+Educación, sexo y edad del jefe & 300: jefe (P203 = 1) & Ninguno \\
+Computadora o laptop & 612: P612N = 7, P612 & Etiqueta ``computadora'' en 2017; tablet como ítem separado desde 2022, excluida \\
+Teléfono celular & 100: P1142 & Ninguno \\
+Internet del hogar (solo sensibilidad) & 100: P1144; P114B1--B3 & Planes de datos móviles incluidos desde 2023; conexión fija P114B1 \\
+Pobreza, gasto, tamaño del hogar & Sumaria: POBREZA, GASHOG2D, MIEPERHO & Quintiles ponderados dentro de cada año \\
+Vivienda inadecuada & 100: NBI1 & Ninguno \\
+Área rural, dominio & ESTRATO, DOMINIO & Rural = estratos 6--8 (centros de 500 a 1\,999 habitantes y áreas de empadronamiento rural) \\
+Residencia habitual & 200: P204, P205 & Se excluyen ausentes 30 días o más \\
+Factores y diseño & FACTORA07, ESTRATO, CONGLOME & Modalidad de entrevista 2020 en TIPOENTREVISTA \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La conectividad a internet del hogar se excluyó del conjunto principal de predictores después de encontrar una ruptura de comparabilidad. Desde 2023 la ENAHO añadió preguntas que distinguen la conexión fija, la móvil pospago y la móvil prepago, y la pregunta general de internet subió de 57.1\% en 2022 a 95.8\% en 2023 y 97.1\% en 2025 entre los adolescentes de nuestra muestra. Un indicador de conexión fija da 28.7\% para 2023 y 30.7\% para 2025, y cerca de siete de cada diez adolescentes muestreados en 2023--2025 vivían en hogares cuya única conexión era móvil. Como la pregunta anterior a 2023 no puede separarse por tipo de conexión, no es posible construir una serie consistente, por lo que internet solo entra en un análisis de sensibilidad.
+
+\subsection{Modelos y diseño muestral}
+Comparamos una regresión logística con regularización L2 (RL) y entradas estandarizadas, un bosque aleatorio (BA, 500 árboles, tamaño mínimo de hoja 20) \cite{breiman2001} y XGBoost \cite{chen2016}. Los hiperparámetros de XGBoost se seleccionaron mediante validación cruzada de cinco particiones agrupada por unidad primaria de muestreo (UPM) en los datos 2017--2019, maximizando el PR-AUC sobre una grilla de profundidad, peso mínimo por hijo y número de árboles. La configuración seleccionada tiene profundidad 4, peso mínimo por hijo 5, 300 árboles, tasa de aprendizaje 0.03 y submuestreo de filas y columnas de 0.8. No remuestreamos la clase minoritaria, para que las probabilidades predichas sigan siendo interpretables. Los modelos se ajustaron sin ponderaciones muestrales, y todas las métricas de evaluación usan el factor de expansión de personas para que se refieran a la población objetivo. Los intervalos de confianza de las prevalencias usan linealización de Taylor con las variables de estrato y UPM distribuidas con los microdatos \cite{lumley2004}. Los intervalos del ROC-AUC y del PR-AUC provienen de 200 réplicas bootstrap que remuestrean UPM. Todos los procesos aleatorios usan la semilla 2026, y el código está organizado en scripts independientes de extracción, armonización, modelamiento y figuras.
+
+\section{Diseño experimental}
+
+El experimento E1 estima el desempeño dentro del periodo mediante validación cruzada de cinco particiones agrupada por UPM en 2017--2019 (30\,009 adolescentes, 1\,382 no matriculados). Como la configuración de XGBoost se eligió con las mismas particiones, sus valores en E1 son ligeramente optimistas. El experimento E2 es la prueba central: los tres modelos se ajustan una sola vez con todos los datos 2017--2019 y se aplican, sin cambios, a cada año de 2020 a 2025. Reportamos ROC-AUC, PR-AUC, puntaje de Brier, calibración global (CG, el intercepto de una recalibración logística con el logit del modelo como \textit{offset}, donde 0 es ideal y los valores positivos indican subestimación) y la pendiente de calibración (ideal 1) \cite{vancalster2019}. Se enfatiza el PR-AUC porque el resultado es poco frecuente \cite{saito2015}. Para 2020 también separamos los resultados por modalidad de entrevista. El experimento E3 pregunta si actualizar el modelo ayuda en el año más reciente. Compara, en 2025, el modelo prepandemia con un modelo reentrenado con 2022--2024 y con una recalibración logística del modelo prepandemia ajustada con 2023--2024. El experimento E4 audita los modelos prepandemia sobre los datos agrupados 2022--2025 por área, pobreza, lengua materna y sexo. Reporta la discriminación, la calibración y la proporción de adolescentes no matriculados identificados cuando se usa como umbral el 10\% de mayor riesgo del conjunto de entrenamiento. El experimento E5 compara los valores SHAP absolutos medios \cite{lundberg2017,lundberg2020} del modelo XGBoost en los años de entrenamiento y en 2022--2025. El experimento E6 es una ablación que elimina las variables de trayectoria escolar, las de acceso digital o ambas, y añade la pregunta de internet del hogar.
+
+\section{Resultados}
+
+\subsection{Tendencias de la no matrícula}
+La Fig.~\ref{fig:prev} muestra estimaciones basadas en el diseño muestral. La no matrícula nacional bajó de 4.51\% (IC 95\% 3.95--5.07) en 2017 a 3.70\% en 2019, subió a 4.94\% (4.23--5.65) en 2021 y descendió a 2.98\% (2.53--3.43) en 2025. La tasa urbana fue la que más se movió durante la pandemia, de 2.71\% en 2019 a 4.37\% en 2020. La tasa rural estuvo por encima de la urbana en todos los años y fue cerca del doble en 2025 (4.75\% frente a 2.43\%).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig1_prevalence.pdf}
+\caption{No matrícula ponderada entre adolescentes de 12 a 17 años sin secundaria completa, entrevistas de abril a diciembre, con bandas de confianza al 95\% basadas en el diseño (Rural, Nacional, Urbano).}
+\label{fig:prev}
+\end{figure}
+
+\subsection{Desempeño dentro del periodo y hacia adelante en el tiempo}
+La Tabla~\ref{tab:perf} y la Fig.~\ref{fig:transfer} resumen E1 y E2. En la validación cruzada 2017--2019, XGBoost y BA superaron ligeramente a la RL en ROC-AUC (0.929 y 0.925 frente a 0.917), y la diferencia fue más clara en PR-AUC (0.525, 0.503 y 0.478, frente a una tasa base de 0.040). Al aplicarse a años posteriores, todos los modelos perdieron discriminación en 2020. XGBoost cayó a 0.836 (IC 95\% 0.795--0.875) y su PR-AUC a 0.451. En 2020 y 2021 los modelos también subestimaron el riesgo: XGBoost asignó un riesgo medio predicho de 3.50\% en 2020 frente a un 4.64\% observado, con valores de CG de 0.44 y 0.46.
+
+La caída de 2020 se concentró en las entrevistas telefónicas, donde el ROC-AUC fue 0.814 y la predicción media 3.28\% frente a un 4.90\% observado. En las entrevistas presenciales el ROC-AUC fue 0.884 y la predicción media 3.85\% frente a 4.22\%. La modalidad de entrevista está confundida con los meses de cuarentena, de modo que esta separación no distingue un efecto de modalidad de un efecto de periodo.
+
+En 2022 y 2023 la discriminación volvió al nivel prepandemia o lo superó (0.940 y 0.930) y la CG fue cercana a cero. En 2024 y 2025 el ROC-AUC fue 0.884 y 0.887, con CG de 0.02 y 0.07 y pendientes de 0.98 y 1.02. Las pendientes de calibración de 1.11--1.12 en 2022--2023 indican que las predicciones fueron algo menos extremas de lo que debían. La Fig.~\ref{fig:cal} muestra las curvas de confiabilidad. El BA igualó o superó ligeramente a XGBoost en varios años, y la RL se mantuvo unos 0.02 por debajo.
+
+\begin{table}[t]
+\caption{Desempeño ponderado de los modelos entrenados con 2017--2019. CG: calibración global (escala logit, 0 ideal). Corchetes: intervalos bootstrap al 95\% por UPM.}
+\label{tab:perf}
+\centering
+\setlength{\tabcolsep}{2.2pt}
+\scriptsize
+\begin{tabular}{lcccccc}
+\toprule
+Prueba & Prev. & \multicolumn{3}{c}{XGBoost} & \multicolumn{2}{c}{RL} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-7}
+ & (\%) & ROC-AUC & PR-AUC & CG & ROC-AUC & PR-AUC \\
+\midrule
+VC 2017--19 & 4.03 & 0.929 & 0.525 & $-$0.02 & 0.917 & 0.478 \\
+2020 & 4.64 & 0.836 [0.80, 0.87] & 0.451 & 0.44 & 0.821 & 0.396 \\
+2021 & 4.94 & 0.901 [0.87, 0.93] & 0.594 & 0.46 & 0.885 & 0.566 \\
+2022 & 3.54 & 0.940 [0.92, 0.95] & 0.593 & 0.04 & 0.923 & 0.544 \\
+2023 & 2.87 & 0.930 [0.90, 0.95] & 0.565 & $-$0.05 & 0.908 & 0.509 \\
+2024 & 3.12 & 0.884 [0.83, 0.93] & 0.519 & 0.02 & 0.866 & 0.482 \\
+2025 & 2.98 & 0.887 [0.84, 0.93] & 0.537 & 0.07 & 0.867 & 0.480 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig2_transfer.pdf}
+\caption{Desempeño hacia adelante en el tiempo de los modelos entrenados con 2017--2019 (XGB = XGBoost, RF = bosque aleatorio, LR = regresión logística). Las barras de error son intervalos bootstrap al 95\% por UPM; las líneas punteadas marcan el valor de validación cruzada de cada modelo.}
+\label{fig:transfer}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.92\columnwidth]{fig3_calibration.pdf}
+\caption{Confiabilidad del modelo XGBoost prepandemia por decil de riesgo en tres años de prueba (ponderada).}
+\label{fig:cal}
+\end{figure}
+
+\subsection{Actualización del modelo}
+En E3, reentrenar XGBoost con 2022--2024 elevó el ROC-AUC de 2025 de 0.887 a 0.897 y el PR-AUC de 0.537 a 0.560, y redujo el puntaje de Brier de 0.0190 a 0.0185. Estas mejoras están bien dentro del intervalo bootstrap del modelo prepandemia (0.840--0.929). Sin embargo, el modelo reentrenado quedó algo peor calibrado (CG 0.12). La recalibración logística con 2023--2024 no cambió la discriminación y movió la CG solo de 0.07 a 0.08. La RL se benefició más del reentrenamiento, de 0.867 a 0.883. Por lo tanto, los años de pandemia parecen un cambio temporal en la tasa del resultado y no un cambio duradero en la relación entre los predictores y la no matrícula.
+
+\subsection{Confiabilidad por subgrupos}
+La Tabla~\ref{tab:sub} reporta E4 para XGBoost. La discriminación fue similar entre grupos (ROC-AUC 0.900--0.918). La calibración no. El riesgo predicho fue demasiado bajo para los adolescentes rurales (predicción media 4.2\% frente a 5.2\% observado, CG 0.33) y para aquellos con lengua materna indígena (3.1\% frente a 4.3\%, CG 0.46), y algo alto para los adolescentes urbanos. Los varones fueron ligeramente subestimados (CG 0.18) y las mujeres ligeramente sobreestimadas ($-$0.15). Con el umbral común, se identificó al 59.6\% de los adolescentes no matriculados de lengua indígena, frente al 68.9\% de los castellanohablantes. La RL reprodujo el mismo sesgo con brechas mayores (CG 0.65 y sensibilidad de 53.9\% para el grupo de lengua indígena).
+
+\begin{table}[t]
+\caption{Auditoría por subgrupos del modelo XGBoost prepandemia sobre los datos agrupados 2022--2025 (ponderada). Sensibilidad: proporción de no matriculados por encima del umbral del 10\% de mayor riesgo del entrenamiento.}
+\label{tab:sub}
+\centering
+\setlength{\tabcolsep}{3.2pt}
+\footnotesize
+\begin{tabular}{lrcccc}
+\toprule
+Grupo & $n$ & Obs./Pred. (\%) & ROC-AUC & CG & Sensib. \\
+\midrule
+Urbano & 21\,753 & 2.4 / 2.7 & 0.900 & $-$0.15 & 0.676 \\
+Rural & 13\,549 & 5.2 / 4.2 & 0.918 & 0.33 & 0.685 \\
+No pobre & 24\,016 & 2.3 / 2.4 & 0.907 & 0.00 & 0.652 \\
+Pobre & 11\,286 & 4.6 / 4.4 & 0.908 & 0.05 & 0.707 \\
+Castellano & 31\,834 & 3.0 / 3.1 & 0.912 & $-$0.02 & 0.689 \\
+Lengua indígena & 3\,468 & 4.3 / 3.1 & 0.900 & 0.46 & 0.596 \\
+Varones & 18\,193 & 3.3 / 2.9 & 0.909 & 0.18 & 0.649 \\
+Mujeres & 17\,109 & 2.9 / 3.2 & 0.915 & $-$0.15 & 0.716 \\
+\midrule
+Total & 35\,302 & 3.1 / 3.1 & 0.911 & 0.02 & 0.680 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Explicaciones y ablación}
+La Fig.~\ref{fig:shap} muestra el resumen SHAP en los años de entrenamiento. El atraso escolar tuvo, con mucha diferencia, el mayor valor SHAP absoluto medio (1.30 en escala log-odds), seguido por la edad (0.42), los años de escolaridad (0.21), la educación del jefe del hogar (0.20) y la tenencia de computadora (0.17). No ser hijo del jefe del hogar y tener más niños en el hogar aumentaron el riesgo predicho. En las atribuciones del modelo, la lengua materna indígena redujo el riesgo predicho, aunque la prevalencia bruta en este grupo es mayor. Esto sugiere que su asociación pasa por la pobreza, la ruralidad y el atraso escolar, que el modelo ya captura, y es coherente con la subestimación reportada arriba. La Fig.~\ref{fig:drift} compara la importancia antes y después de la pandemia. El orden fue estable. La tenencia de computadora fue la variable cuya importancia más aumentó (de 0.172 a 0.195), seguida por la educación del jefe del hogar (de 0.198 a 0.213), mientras que el atraso escolar bajó ligeramente (de 1.30 a 1.19).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\columnwidth]{fig4_shap.pdf}
+\caption{Resumen SHAP del modelo XGBoost en 2017--2019 (muestra aleatoria de 6\,000 adolescentes; los 12 predictores más importantes).}
+\label{fig:shap}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.92\columnwidth]{fig5_shap_drift.pdf}
+\caption{Valor SHAP absoluto medio de los diez predictores más importantes del modelo XGBoost prepandemia, en los años de entrenamiento y en 2022--2025.}
+\label{fig:drift}
+\end{figure}
+
+La Tabla~\ref{tab:abl} reporta la ablación. Eliminar los años de escolaridad y el atraso escolar redujo el ROC-AUC entre 0.06 y 0.10 en cada año de prueba (0.803 frente a 0.887 en 2025), y el PR-AUC de 2025 bajó de 0.537 a 0.184. Eliminar la tenencia de computadora y celular, o añadir internet del hogar, cambió el ROC-AUC en 0.004 o menos en todos los años. Por lo tanto, el acceso digital está asociado con la no matrícula, pero aporta poca información que la pobreza, el gasto y la escolaridad de los padres no proporcionen ya.
+
+\begin{table}[t]
+\caption{Ablación (E6): ROC-AUC de XGBoost entrenado con 2017--2019 con distintos conjuntos de predictores.}
+\label{tab:abl}
+\centering
+\setlength{\tabcolsep}{2.4pt}
+\scriptsize
+\begin{tabular}{lcccccc}
+\toprule
+Conjunto de predictores & 2020 & 2021 & 2022 & 2023 & 2024 & 2025 \\
+\midrule
+Modelo completo & 0.836 & 0.901 & 0.940 & 0.930 & 0.884 & 0.887 \\
+Sin trayectoria escolar & 0.771 & 0.798 & 0.850 & 0.852 & 0.789 & 0.803 \\
+Sin acceso digital & 0.833 & 0.900 & 0.936 & 0.930 & 0.887 & 0.887 \\
+Solo variables del hogar y del área & 0.721 & 0.771 & 0.800 & 0.794 & 0.728 & 0.778 \\
+Completo + internet del hogar & 0.838 & 0.903 & 0.941 & 0.930 & 0.884 & 0.889 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Discusión}
+
+El hallazgo principal es que un modelo entrenado antes de la pandemia no necesitó reconstruirse después. Su ordenamiento de los adolescentes se deterioró en 2020, cuando la escolaridad, las finanzas de los hogares y el propio trabajo de campo de la encuesta se alteraron al mismo tiempo. Luego se recuperó, y reentrenarlo con los tres años más recientes lo mejoró solo de forma modesta en 2025. La falla que importó en la práctica en 2020--2021 fue la calibración: el modelo indicó que menos adolescentes estaban en riesgo de los que realmente lo estaban. Un sistema que fijara el tamaño de una intervención a partir del riesgo medio predicho habría asignado cerca de una cuarta parte menos de recursos en 2020. Por lo tanto, vigilar cada año la calibración global es más urgente que reentrenar con frecuencia. En la práctica, una institución podría comparar el riesgo medio predicho con la tasa ponderada de la encuesta apenas se publique cada ronda de la ENAHO y ajustar el intercepto cuando ambos se separen.
+
+La auditoría por subgrupos muestra un problema menos visible. Un ROC-AUC igual entre grupos puede coexistir con una subestimación sistemática para los adolescentes rurales y de lengua indígena, dos grupos con mayor no matrícula observada. Un umbral o una recalibración por grupo podrían reducir la brecha, aunque no lo probamos. La decisión corresponde a las instituciones que usarían una herramienta así, y debería tomarse con las personas afectadas.
+
+Dos puntos de medición son útiles para otros usuarios de la ENAHO. La pregunta de matrícula depende del calendario escolar, por lo que las entrevistas de enero a marzo deben excluirse o modelarse por separado. La pregunta de internet del hogar no es comparable desde 2023 porque ahora incluye los planes de datos móviles. Un estudio descriptivo de la brecha digital basado en esa pregunta reportaría un salto en la conectividad que no ocurrió.
+
+El predictor más fuerte, el atraso escolar, merece cautela. Los estudiantes con antecedentes de repetición o ingreso tardío tienen mayor riesgo, como han mostrado trabajos peruanos anteriores \cite{cavero2011}. Sin embargo, un adolescente que dejó la escuela un año antes también acumula atraso, porque sus grados dejan de avanzar. Parte de su poder predictivo puede reflejar, entonces, la no matrícula pasada y no solo un riesgo previo. La ablación acota este efecto: sin las variables escolares el modelo todavía alcanza un ROC-AUC entre 0.79 y 0.85 en 2022--2025.
+
+El estudio tiene otras limitaciones. Como analizamos cada ronda como un corte transversal, no podemos observar el momento en que se deja la escuela ni predecir la deserción futura de quienes hoy están matriculados, y las viviendas de la submuestra panel de la ENAHO pueden aparecer tanto en años de entrenamiento como de prueba. La mayoría de las entrevistas de 2020 se hicieron por teléfono, y la modalidad no puede separarse del periodo de cuarentena. Las estimaciones para adolescentes de lengua indígena se basan en 212 casos de no matrícula y tienen una incertidumbre amplia. El análisis no incluye variables de oferta escolar, como la distancia a la escuela secundaria más cercana. Por último, todas las asociaciones son predictivas y no deben interpretarse como efectos causales.
+
+\section{Conclusión}
+
+Con nueve años de datos oficiales de una encuesta de hogares, mostramos que un modelo explicable de no matrícula escolar adolescente en el Perú entrenado con 2017--2019 perdió discriminación y subestimó el riesgo durante la pandemia, recuperó su desempeño hacia 2022 y ganó poco con el reentrenamiento en 2025. Sus errores no fueron neutrales, porque el riesgo se subestimó para los adolescentes rurales y de lengua indígena pese a una discriminación similar. La trayectoria escolar dominó las explicaciones, y el acceso digital del hogar aportó poco más allá del nivel socioeconómico. Como trabajo futuro planeamos incorporar datos de oferta del censo escolar y usar la submuestra panel de la ENAHO para estudiar directamente las transiciones fuera de la escuela.
+
+\section*{Agradecimiento}
+Los autores usaron Claude Opus 5.5 (Anthropic), un sistema de inteligencia artificial, como apoyo para escribir el código de procesamiento de datos y modelamiento, producir las figuras y redactar y traducir el texto de todas las secciones. Los autores revisaron el código, los resultados, el texto y las referencias, y asumen plena responsabilidad por el contenido de este artículo.
+
+\begin{thebibliography}{00}
+\bibitem{rodriguez2023} P. Rodríguez, A. Villanueva, L. Dombrovskaia, and J. P. Valenzuela, ``A methodology to design, develop, and evaluate machine learning models for predicting dropout in school systems: The case of Chile,'' \textit{Educ. Inf. Technol.}, pp. 1--47, 2023, doi: 10.1007/s10639-022-11515-5.
+\bibitem{jacha2024} J. P. Jacha Rojas, W. Yataco Cañari, and J. A. Ospina Galindez, ``Machine learning model for predicting school dropout through household surveys,'' Univ. Nac. Hermilio Valdizán, 2024. [Online]. Available: \url{http://revistas.unheval.edu.pe/index.php/rifce/article/view/2308}
+\bibitem{jimenez2024} A. L. Jiménez-Gutiérrez, C. I. Mota-Hernández, E. Mezura-Montes, and R. Alvarado-Corona, ``Application of the performance of machine learning techniques as support in the prediction of school dropout,'' \textit{Sci. Rep.}, vol. 14, Art. no. 3957, 2024, doi: 10.1038/s41598-024-53576-1.
+\bibitem{moreno2012} J. G. Moreno-Torres, T. Raeder, R. Alaiz-Rodríguez, N. V. Chawla, and F. Herrera, ``A unifying view on dataset shift in classification,'' \textit{Pattern Recognit.}, vol. 45, no. 1, pp. 521--530, 2012, doi: 10.1016/j.patcog.2011.06.019.
+\bibitem{vancalster2019} B. Van Calster, D. J. McLernon, M. van Smeden, L. Wynants, and E. W. Steyerberg, ``Calibration: The Achilles heel of predictive analytics,'' \textit{BMC Med.}, vol. 17, Art. no. 230, 2019, doi: 10.1186/s12916-019-1466-7.
+\bibitem{baker2022} R. S. Baker and A. Hawn, ``Algorithmic bias in education,'' \textit{Int. J. Artif. Intell. Educ.}, vol. 32, pp. 1052--1092, 2022, doi: 10.1007/s40593-021-00285-9.
+\bibitem{bowers2013} A. J. Bowers, R. Sprott, and S. A. Taff, ``Do we know who will drop out? A review of the predictors of dropping out of high school: Precision, sensitivity, and specificity,'' \textit{High Sch. J.}, vol. 96, no. 2, pp. 77--100, 2013, doi: 10.1353/hsj.2013.0000.
+\bibitem{lakkaraju2015} H. Lakkaraju \textit{et al.}, ``A machine learning framework to identify students at risk of adverse academic outcomes,'' in \textit{Proc. 21st ACM SIGKDD Int. Conf. Knowl. Discov. Data Min.}, 2015, pp. 1909--1918, doi: 10.1145/2783258.2788620.
+\bibitem{sansone2019} D. Sansone, ``Beyond early warning indicators: High school dropout and machine learning,'' \textit{Oxford Bull. Econ. Stat.}, vol. 81, no. 2, pp. 456--485, 2019, doi: 10.1111/obes.12277.
+\bibitem{romero2020} C. Romero and S. Ventura, ``Educational data mining and learning analytics: An updated survey,'' \textit{WIREs Data Min. Knowl. Discov.}, vol. 10, no. 3, Art. no. e1355, 2020, doi: 10.1002/widm.1355.
+\bibitem{khatun2025} M. R. Khatun, M. A. Mim, M. M. Tasin, and M. M. Hossain, ``A hybrid framework of statistical, machine learning, and explainable AI methods for school dropout prediction,'' \textit{PLoS ONE}, vol. 20, no. 9, Art. no. e0331917, 2025, doi: 10.1371/journal.pone.0331917.
+\bibitem{cavero2011} D. Cavero, V. Montalva, and J. Rodríguez, ``Determinantes socioeconómicos de las transiciones entre niveles educativos: Un enfoque sobre género y ruralidad en el Perú,'' Dept. Economía, Pontificia Univ. Católica del Perú, Lima, Doc. de Trabajo 309, 2011.
+\bibitem{alcazar2009} L. Alcázar, ``Asistencia y deserción en escuelas secundarias rurales del Perú,'' \textit{REICE}, vol. 7, no. 4, pp. 136--163, 2009.
+\bibitem{anaya2021} T. Anaya Figueroa, ``Escuelas rurales en el Perú: Factores que acentúan las brechas digitales en tiempos de pandemia (COVID-19) y recomendaciones para reducirlas,'' \textit{Educación}, 2021, doi: 10.18800/educacion.202101.001.
+\bibitem{inei} Instituto Nacional de Estadística e Informática, ``Encuesta Nacional de Hogares (ENAHO), microdatos 2017--2025,'' Lima, Perú. [Online]. Available: \url{https://proyectos.inei.gob.pe/microdatos/}
+\bibitem{breiman2001} L. Breiman, ``Random forests,'' \textit{Mach. Learn.}, vol. 45, no. 1, pp. 5--32, 2001, doi: 10.1023/A:1010933404324.
+\bibitem{chen2016} T. Chen and C. Guestrin, ``XGBoost: A scalable tree boosting system,'' in \textit{Proc. 22nd ACM SIGKDD Int. Conf. Knowl. Discov. Data Min.}, 2016, pp. 785--794, doi: 10.1145/2939672.2939785.
+\bibitem{lumley2004} T. Lumley, ``Analysis of complex survey samples,'' \textit{J. Stat. Softw.}, vol. 9, no. 8, pp. 1--19, 2004, doi: 10.18637/jss.v009.i08.
+\bibitem{saito2015} T. Saito and M. Rehmsmeier, ``The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets,'' \textit{PLoS ONE}, vol. 10, no. 3, Art. no. e0118432, 2015, doi: 10.1371/journal.pone.0118432.
+\bibitem{lundberg2017} S. M. Lundberg and S.-I. Lee, ``A unified approach to interpreting model predictions,'' in \textit{Adv. Neural Inf. Process. Syst. 30}, 2017, pp. 4765--4774.
+\bibitem{lundberg2020} S. M. Lundberg \textit{et al.}, ``From local explanations to global understanding with explainable AI for trees,'' \textit{Nat. Mach. Intell.}, vol. 2, pp. 56--67, 2020, doi: 10.1038/s42256-019-0138-9.
+\end{thebibliography}
+
+\end{document}

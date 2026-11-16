@@ -1,0 +1,17 @@
+{
+  "seed": 2026,
+  "paths": {"raw": "data/raw", "processed": "data/processed"},
+  "years": {"first": 2017, "last": 2025, "train": [2017, 2018, 2019], "test": [2020, 2021, 2022, 2023, 2024, 2025]},
+  "population": {"age_min": 12, "age_max": 17, "first_month": 4, "last_month": 12},
+  "bootstrap": {"replicates": 1000, "method": "Rao-Wu rescaled bootstrap, PSUs resampled within strata (n_h - 1 draws)"},
+  "cv": {"outer_folds": 5, "inner_folds": 3, "group": "conglome (cluster code, pooled across years)", "selection_metric": "survey-weighted PR-AUC"},
+  "grids": {
+    "LR": {"C": [0.01, 0.1, 1.0, 10.0]},
+    "RF": {"min_samples_leaf": [10, 20, 50], "n_estimators": [300]},
+    "XGB": {"max_depth": [3, 4, 5], "min_child_weight": [5, 20], "n_estimators": [300, 600],
+            "learning_rate": [0.03], "subsample": [0.8], "colsample_bytree": [0.8], "reg_lambda": [1.0]}
+  },
+  "flag_quantile": 0.90,
+  "update": {"fit_years": [2022, 2023, 2024], "eval_year": 2025},
+  "subgroup_pool": [2022, 2023, 2024, 2025]
+}
